@@ -271,6 +271,12 @@ this.tick = function (game){
           let steps = gametimer - game.step;
           let minutes = Math.floor(steps / 3600);
           let seconds = Math.floor((steps % 3600) / 60);
+          let msg="";
+          if (seconds > 0 && minutes == 5) {
+            minutes-=5;
+            msg+="Game starts in:";
+          }
+          else msg+="Time left:";
           if (seconds < 10) seconds = "0" + seconds;
           if (minutes < 10) minutes = "0" + minutes;
           for (let ship of game.ships){
@@ -279,7 +285,7 @@ this.tick = function (game){
               position: [3,28,17,15],
               visible: true,
               components: [
-                {type: "text",position:[0,0,80,33],value:`Time left: ${minutes}:${seconds}`,color:"#fff"},
+                {type: "text",position:[0,0,80,33],value:msg+` ${minutes}:${seconds}`,color:"#fff"},
               ]
             });
           }
