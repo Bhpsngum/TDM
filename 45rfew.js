@@ -242,7 +242,7 @@ this.tick = function (game){
           ship.custom.wait = true;
           setteam(ship);
           ship.set({idle:true});
-          gamelength = 6.3;
+          gamelength = 5.25;
           //waiting
         }
       }
@@ -284,7 +284,7 @@ this.tick = function (game){
             });
           }
         } else {
-          gamelength += 6.3;
+          gamelength += 5.25;
           resetgame(game);
         }
       }        
@@ -503,7 +503,7 @@ function outputscoreboard(game,tm){
   }
 }
  
-var redpoints = 0, bluepoints = 0, gamelength = 6.3;
+var redpoints = 0, bluepoints = 0, gamelength = 5.25;
 function updatescore(game){
   for (let ship of game.ships){
    ship.setUIComponent({
