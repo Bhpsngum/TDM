@@ -187,6 +187,7 @@ function resetgame(game){
     data=randomShips();
     for (let ship of game.ships){
       ship.setUIComponent({id: "gamestat", visible: false});      
+      ship.emptyWeapons();
       selectship(ship);
     }  
   }, 5000);  
@@ -294,7 +295,7 @@ this.tick = function (game){
             minutes-=5;
             msg+="Game starts in: ";
           }
-          else msg+="Time left:";
+          else msg+="Time left: ";
           if (seconds < 10) seconds = "0" + seconds;
           if (minutes < 10) minutes = "0" + minutes;
           for (let ship of game.ships){
