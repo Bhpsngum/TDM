@@ -165,9 +165,9 @@ function setteam(ship){
  
 function resetgame(game){
   let team, color, text;
-  if (redpoints > bluepoints){
+  if (points[0] > points[1]){
     text = "Game finished! Red team wins!"; color = "#ff0000";
-    } else if (redpoints < bluepoints){
+    } else if (points[0] < points[1]){
     text = "Game finished! Blue team wins!"; color = "#0000ff";
   } else text = "Game finished! It's a draw!"; color = "#fff";
   for (let ship of game.ships){
@@ -196,7 +196,7 @@ function resetgame(game){
 function selectship(ship){
   ship.custom.shiped = false;
   ship.set({idle:true});
-  ship.frag = 0; redpoints = 0; bluepoints = 0;  
+  ship.frag = 0; ponits=[0,0];
   ship.setUIComponent({
     id: "ship text", position: [39,20,22,50], visible: true,
     components: [
@@ -282,7 +282,6 @@ this.tick = function (game){
           ship.custom.wait = false;
         } ship.set({score:ship.frag});
       }
-      updatescore(game);
       updatescoreboard(game);
       var gametimer = gamelength * 3600;
       if (game.step % 30 === 0){
@@ -335,12 +334,6 @@ this.event = function (event,game){
       showkills(game,event);
       if (!Object.is(event.killer,null)) event.killer.frag++;
       event.ship.death++;
-      updatescoreboard(game);
-      if (event.killer.team === 0){
-        redpoints++;
-      } else if (event.killer.team === 1){
-        bluepoints++;
-      }
     break;
     case "ui_component_clicked":
       var ship = event.ship;
@@ -489,10 +482,14 @@ sort = function(arr){
   }
   return array;
 };
- 
 function updatescoreboard(game){
   let t=[[],[]];
-  for (let ship of game.ships) t[ship.team].push(ship);
+  points = [0,0];
+  for (let ship of game.ships)
+  {
+    t[ship.team].push(ship);
+    points[ship.team] += ship.frag;
+  }
   scoreboard.components = [
     { type:"box",position:[0,0,50,8],fill:getcolor(colors[0])},
     { type: "text",position: [0,0,50,8],color: "#FFF",value: "Red"},
@@ -532,25 +529,21 @@ function outputscoreboard(game,tm){
       new Tag("player",ship.id,ship.team*50,90,ship.team,"left")
     );
     ship.setUIComponent(scoreboard);
-    scoreboard.components = [...origin];
-  }
-}
- 
-var redpoints = 0, bluepoints = 0, gamelength = 5.25;
-function updatescore(game){
-  for (let ship of game.ships){
-   ship.setUIComponent({
+    ship.setUIComponent({
       id: "points",
       position: [40,6,26,20],
       visible: true,
       components: [
-        {type: "text",position:[-25+8,0,80,33],value:redpoints,color:"#ff0000"},
+        {type: "text",position:[-25+8,0,80,33],value:points[0],color:"#ff0000"},
         {type: "text",position:[-2,0,80,33],value:`-`,color:"#fff"},
-        {type: "text",position:[14,0,80,33],value:bluepoints,color:"#0000ff"},
+        {type: "text",position:[14,0,80,33],value:points[1],color:"#0000ff"},
       ]
     });
-  }  
+    scoreboard.components = [...origin];
+  }
 }
+ 
+var points=[0,0], gamelength = 5.25;
  
 function spawnSecondary(){
   var range = 10;
