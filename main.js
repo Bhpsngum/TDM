@@ -228,7 +228,19 @@ function selectship(ship){
 }
  
 function randomShips(){
-  let round_ships=[],s=JSON.parse(JSON.stringify(select_ships)),r=rand(s.length);
+  let round_ships=[],s=JSON.parse(JSON.stringify(select_ships));
+  let rarity = [[2,7],[3,11],[4,16],[5,23],[6,30],[7,13]];
+  let field=[];
+  while (field.length<100)
+  {
+    for (let i=0;i<6;i++)
+      if (rarity[i][1] > 0)
+      {
+          field.push(rarity[i][0])
+          rarity[i][1]--;
+      }
+  }
+  let r = field[rand(100)]-2;
   for (let i of [,,]) round_ships.push(...s[r].splice(rand(s[r].length),1));
   return round_ships;
 }
