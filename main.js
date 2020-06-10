@@ -199,7 +199,7 @@ function selectship(ship){
   ship.custom.shiped = false;
   ship.set({vx:0,vy:0});
   ship.set({idle:true});
-  ship.frag = 0; ponits=[0,0];
+  ship.frag = 0; points=[0,0];
   ship.setUIComponent({
     id: "ship text", position: [39,20,22,50], visible: true,
     components: [
