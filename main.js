@@ -340,7 +340,6 @@ this.tick = function (game){
         }
       }
     }
-    console.log(gamelength);
   }
   if (game.step % 60 === 0) checkteambase();
   if (game.step % 1800 === 0) spawnSecondary();
