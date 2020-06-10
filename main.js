@@ -42,7 +42,7 @@ var select_ships = [[],[],[],[],[],[
  
 for (let i in a){
   let ship = JSON.parse(a[i]);
-  (ship.typespec.level != 1) && select_ships[ship.level-2].push({name:ship.name,code:ship.typespec.code});
+  (ship.level != 1) && select_ships[ship.level-2].push({name:ship.name,code:ship.typespec.code});
 }
  
 var map =
@@ -162,7 +162,17 @@ function setteam(ship){
     ship.set({hue:ts[t].hue,team:t,x:ts[t].x,y:ts[t].y,invulnerable:600});
   }
 }
- 
+function restartgame(game){
+  yeetalien(game);
+  game.addAlien({x:195,y:195,level:2});game.addAlien({x:-195,y:195,level:2});game.addAlien({x:-195,y:-195,level:2});game.addAlien({x:195,y:-195,level:2});
+  splitIntoTeams();
+  data=randomShips();
+  for (let ship of game.ships){
+    ship.setUIComponent({id: "gamestat", visible: false});      
+    ship.emptyWeapons();
+    selectship(ship);
+  }  
+} 
 function resetgame(game){
   let team, color, text;
   if (points[0] > points[1]){
@@ -181,20 +191,13 @@ function resetgame(game){
     });
   }
   setTimeout(function(){
-    yeetalien(game);
-    game.addAlien({x:195,y:195,level:2});game.addAlien({x:-195,y:195,level:2});game.addAlien({x:-195,y:-195,level:2});game.addAlien({x:195,y:-195,level:2});
-    splitIntoTeams();
-    data=randomShips();
-    for (let ship of game.ships){
-      ship.setUIComponent({id: "gamestat", visible: false});      
-      ship.emptyWeapons();
-      selectship(ship);
-    }  
+    restartgame(game);
   }, 5000);  
 }
  
 function selectship(ship){
   ship.custom.shiped = false;
+  ship.set({vx:0,vy:0});
   ship.set({idle:true});
   ship.frag = 0; ponits=[0,0];
   ship.setUIComponent({
@@ -227,7 +230,10 @@ function selectship(ship){
     }
   }, 10000);    
 }
- 
+function toTick(minutes) 
+{
+  return minutes*3600
+}
 function randomShips(){
   let round_ships=[],s=JSON.parse(JSON.stringify(select_ships));
   let rarity = [[2,7],[3,11],[4,16],[5,23],[6,30],[7,13]];
@@ -245,56 +251,76 @@ function randomShips(){
   for (let i of [,,]) round_ships.push(...s[r].splice(rand(s[r].length),1));
   return round_ships;
 }
-let data=randomShips();
+let data=randomShips(),delayed = 0;
  
 this.tick = function (game){
   if (game.step % 30 === 0){
     if (game.ships.length <= 1){
+      delayed=1;
+      gamelength=game.step+toTick(5.25);
       for (let ship of game.ships){
         if (!ship.custom.wait){
           ship.custom.wait = true;
+          ship.set({vx:0,vy:0});
           ship.set({idle:true});
           setteam(ship);
           ship.setUIComponent({
             id: "wait", position: [39,20,22,50], visible: true,
             components: [
-              { type: "text",position:[0,0,100,60],value:"Waiting for more players...",color:"#FFFFFF"},
+              { type: "text",position:[0,0,100,10],value:"Waiting for more players...",color:"#FFFFFF"},
             ]
-          });  
+          });
+          ship.setUIComponent({
+            id: "scoreboard",
+            visible:true,
+            components: [
+              { type: "text",position:[15,0,70,10],value:"Waiting for more players...",color:"#FFFFFF"},  
+            ]
+          });
+          ship.setUIComponent({
+            id: "timer",
+            visible:false,
+            components: []
+          });
+          ship.setUIComponent({
+            id: "points",
+            visible:false,
+            components: []
+          });
         }
       }
     } else {
-    if (game.step % 30 === 0){
-      if (!game.custom.alien){
-        game.custom.alien = true;
-        data=randomShips();
-        gamelength = 5.25;
-        game.addAlien({x:195,y:195,level:2});game.addAlien({x:-195,y:195,level:2});game.addAlien({x:-195,y:-195,level:2});game.addAlien({x:195,y:-195,level:2});
+      if (delayed) {
+        restartgame(game);
+        delayed=0;
       }
-      for (let ship of game.ships){
-        ship.setUIComponent({id:"wait",visible:false});  
-        if (!ship.custom.init){
-          ship.custom.init = true;
-          selectship(ship);
-          setteam(ship)
-          ship.frag=0;
-          ship.death=0;      
-          ship.custom.wait = false;
-        } ship.set({score:ship.frag});
-      }
-      updatescoreboard(game);
-      var gametimer = gamelength * 3600;
-      if (game.step % 30 === 0){
-        if (game.step <= gametimer){
-          let steps = gametimer - game.step;
-          let minutes = Math.floor(steps / 3600);
-          let seconds = Math.floor((steps % 3600) / 60);
-          let msg="";
-          if (seconds > 0 && minutes == 5) {
-            minutes-=5;
+      else
+      {
+        if (!game.custom.alien){
+          game.custom.alien = true;
+          data=randomShips();
+          game.addAlien({x:195,y:195,level:2});game.addAlien({x:-195,y:195,level:2});game.addAlien({x:-195,y:-195,level:2});game.addAlien({x:195,y:-195,level:2});
+        }
+        for (let ship of game.ships){
+          ship.setUIComponent({id:"wait",visible:false});  
+          if (!ship.custom.init){
+            ship.custom.init = true;
+            selectship(ship);
+            setteam(ship)
+            ship.frag=0;
+            ship.custom.wait = false;
+          } ship.set({score:ship.frag});
+        }
+        updatescoreboard(game);
+        if (game.step <= gamelength){
+          let steps = gamelength - game.step,msg="";
+          if (steps > toTick(5)) {
+            steps-=toTick(5);
             msg+="Game starts in: ";
           }
           else msg+="Time left: ";
+          let minutes = Math.floor(steps / 3600);
+          let seconds = Math.floor((steps % 3600) / 60);
           if (seconds < 10) seconds = "0" + seconds;
           if (minutes < 10) minutes = "0" + minutes;
           for (let ship of game.ships){
@@ -307,16 +333,17 @@ this.tick = function (game){
               ]
             });
           }
-        } else {
-          gamelength += 5.25;
+        } 
+        else {
+          gamelength=game.step+toTick(5.25);
           resetgame(game);
         }
-      }        
+      }
     }
-    if (game.step % 60 === 0) checkteambase();
-    if (game.step % 1800 === 0) spawnSecondary();
-    }
+    console.log(gamelength);
   }
+  if (game.step % 60 === 0) checkteambase();
+  if (game.step % 1800 === 0) spawnSecondary();
 };
  
 this.event = function (event,game){
@@ -325,15 +352,14 @@ this.event = function (event,game){
       var ship = event.ship;
       var ship_level = Math.trunc(ship.type / 100);
       if (ship !== null){
-        if (ship.team === 0) ship.set({x:-215,y:0,crystals:((Math.round(ship_level||0)**2)*20/4),invulnerable:400,stats:88888888});  
+        if (ship.team === 0) ship.set({x:-215,y:0,crystals:((Math.round(ship_level||0)**2)*20/3),invulnerable:400,stats:88888888});  
           else
-        if (ship.team === 1) ship.set({x:215,y:0,crystals:((Math.round(ship_level||0)**2)*20/4),invulnerable:400,stats:88888888});
+        if (ship.team === 1) ship.set({x:215,y:0,crystals:((Math.round(ship_level||0)**2)*20/3),invulnerable:400,stats:88888888});
       }
     break;    
     case "ship_destroyed":
       showkills(game,event);
       if (!Object.is(event.killer,null)) event.killer.frag++;
-      event.ship.death++;
     break;
     case "ui_component_clicked":
       var ship = event.ship;
@@ -543,7 +569,7 @@ function outputscoreboard(game,tm){
   }
 }
  
-var points=[0,0], gamelength = 5.25;
+var points=[0,0], gamelength = toTick(5.25);
  
 function spawnSecondary(){
   var range = 10;
