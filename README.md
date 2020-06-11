@@ -3,7 +3,7 @@ All source codes for TDM Mod - currently private
 
 ## Credits
 * **Coding:** Money & Bhpsngum
-* **Author of idea:** L.gaming & Nex
+* **Author of idea:** L.Gaming & Nex
 ## Changelogs
 ### 0.95.3
 * Fixed leaderboard scoring 
