@@ -162,10 +162,11 @@ function setteam(ship){
     ship.set({hue:ts[t].hue,team:t,x:ts[t].x,y:ts[t].y,invulnerable:600});
   }
 }
-function restartgame(game){
+function restartgame(game,isGameOver){
   yeetalien(game);
   game.addAlien({x:195,y:195,level:2});game.addAlien({x:-195,y:195,level:2});game.addAlien({x:-195,y:-195,level:2});game.addAlien({x:195,y:-195,level:2});
   splitIntoTeams();
+  if (!isGameOver) gamelength = game.step+toTick(5+1/6);
   data=randomShips();
   for (let ship of game.ships){
     ship.setUIComponent({id: "gamestat", visible: false});      
@@ -191,7 +192,7 @@ function resetgame(game){
     });
   }
   setTimeout(function(){
-    restartgame(game);
+    restartgame(game,1);
   }, 5000);  
 }
  
