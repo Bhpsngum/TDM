@@ -349,7 +349,9 @@ this.tick = function (game){
       visible:true,
       components:[
         {type:"box",position:[2,42,10,16],fill:getcolor(colors[0],0.5)},
-        {type:"box",position:[88,42,10,16],fill:getcolor(colors[1],0.5)}
+        {type:"box",position:[88,42,10,16],fill:getcolor(colors[1],0.5)},
+        {type:"box",position:[88,42,1,16],fill:getcolor(colors[1],1)},
+        {type:"box",position:[11,42,1,16],fill:getcolor(colors[0],1)}
       ]
     });
   }
