@@ -141,7 +141,8 @@ this.options = {
   soundtrack: "argon.mp3",
   hues: colors,
   speed_mod: 1.2,
-  mines_destroy_delay: 7200/1.5
+  mines_self_destroy: true,
+  mines_destroy_delay: 600
 };
 
 function rand(lol){
@@ -199,11 +200,23 @@ function resetgame(game){
     restartgame(game,1);
   }, 5000);
 }
-
+let shipUI = [
+  {
+    id: "0",
+    position: [22.5,39,22,45],
+    clickable: true,
+    visible: true
+  },
+  {
+    id: "1",
+    position: [55,39,22,45],
+    clickable: true,
+    visible: true
+  }
+];
 function selectship(ship){
   ship.custom.shiped = false;
   ship.set({vx:0,vy:0});
-  ship.set({idle:true});
   ship.frag = 0; points=[0,0];
   ship.setUIComponent({
     id: "ship text", position: [39,20,22,50], visible: true,
@@ -211,26 +224,21 @@ function selectship(ship){
       { type: "text",position:[0,0,100,60],value:"Choose your ship for this round",color:"#FFFFFF"},
     ]
   });
-  ship.setUIComponent({
-    id: "ship1", position: [22.5,39,22,45], clickable: true, visible: true,
-    components: [
-      { type:"box",position:[0,0,100,100],fill:"rgb(54,57,64,0.6)",stroke:"#fff",width:10},
-      { type: "text",position:[22.5,0,50,30],value:data[0].name,color:"#FFFFFF"},
-    ]
-  });
-  ship.setUIComponent({
-    id: "ship2", position: [55,39,22,45], clickable: true, visible: true,
-    components: [
-      { type:"box",position:[0,0,100,100],fill:"rgb(54,57,64,0.6)",stroke:"#fff",width:10},
-      { type: "text",position:[22.5,0,50,30],value:data[1].name,color:"#FFFFFF"},
-    ]
-  });
+  shipUI[0].components = [
+    { type:"box",position:[0,0,100,100],fill:"rgb(54,57,64,0.6)",stroke:"#fff",width:10},
+    { type: "text",position:[22.5,15,50,30],value:data[0].name,color:"#FFFFFF"},
+  ];
+  shipUI[1].components = [
+    { type:"box",position:[0,0,100,100],fill:"rgb(54,57,64,0.6)",stroke:"#fff",width:10},
+    { type: "text",position:[22.5,15,50,30],value:data[1].name,color:"#FFFFFF"},
+  ];
+  for (let UI of shipUI) ship.setUIComponent(UI);
   setTimeout(function(){
     ship.setUIComponent({id:"ship text",visible:false});
-    ship.setUIComponent({id:"ship1",visible:false});
-    ship.setUIComponent({id:"ship2",visible:false});
-    if (!ship.custom.shiped){
-      ship.set({type:data[rand(2)].code,crystals:~~((Math.trunc(data[1].code/100)**2)*20/4),invulnerable:400,stats:88888888,idle:false,shield:999});
+    ship.setUIComponent({id:"0",visible:false});
+    ship.setUIComponent({id:"1",visible:false});
+    if (!ship.custom.selected){
+      ship.set({type:data[rand(2)].code,crystals:~~((Math.trunc(data[1].code/100)**2)*20/3),invulnerable:400,stats:88888888,shield:999});
       ship.custom.shiped = true;
     }
   }, 10000);
@@ -257,7 +265,11 @@ function randomShips(){
   return round_ships;
 }
 let data=randomShips(),delayed = 0;
-
+function setIdle(ship)
+{
+  if (gamelength-game.step > toTick(5) || !ship.custom.shiped) ship.set({idle:true});
+  else ship.set({idle:false});
+}
 this.tick = function (game){
   if (game.step % 30 === 0){
     if (game.ships.length <= 1){
@@ -267,8 +279,8 @@ this.tick = function (game){
         if (!ship.custom.wait){
           ship.custom.wait = true;
           ship.set({vx:0,vy:0});
-          ship.set({idle:true});
           setteam(ship);
+          setIdle(ship);
         }
       }
       game.setUIComponent({
@@ -314,7 +326,9 @@ this.tick = function (game){
             setteam(ship)
             ship.frag=0;
             ship.custom.wait = false;
-          } ship.set({score:ship.frag});
+          }
+          ship.set({score:ship.frag});
+          setIdle(ship);
         }
         updatescoreboard(game);
         if (game.step <= gamelength){
@@ -377,20 +391,24 @@ this.event = function (event,game){
     case "ui_component_clicked":
       var ship = event.ship;
       var component = event.id;
-      if (component == "ship1"){
-        ship.set({type:data[0].code,invulnerable:400,stats:88888888,shield:999});
-        ship.set({crystals:~~((Math.trunc(data[1].code/100)**2)*20/4),idle:false});
-        ship.setUIComponent({id:"ship1",visible:false});
-        ship.setUIComponent({id:"ship2",visible:false});
-        ship.setUIComponent({id:"ship text",visible:false});
-        ship.custom.shiped = true;
-      } else if (component == "ship2"){
-        ship.set({type:data[1].code,invulnerable:400,stats:88888888,shield:999});
-        ship.set({crystals:~~((Math.trunc(data[1].code/100)**2)*20/4),idle:false});
-        ship.setUIComponent({id:"ship1",visible:false});
-        ship.setUIComponent({id:"ship2",visible:false});
-        ship.setUIComponent({id:"ship text",visible:false});
-        ship.custom.shiped = true;
+      if (["0","1"].indexOf(component) != -1)
+      {
+        if (gamelength-game.step <= toTick(5))
+        {
+          ship.setUIComponent({id:"0",visible:false});
+          ship.setUIComponent({id:"1",visible:false});
+          ship.setUIComponent({id:"ship text",visible:false});
+          ship.custom.shiped = true;
+          ship.custom.selected = true;
+        }
+        else
+        {
+          for (let i=0;i<2;i++) shipUI[i].components = [...shipUI[i].components.slice(0,2)]
+          shipUI[component].components.push({type: "text",position:[22.5,50,50,30],value:"✓",color:"#FFFFFF"});
+          for (let UI of shipUI) ship.setUIComponent(UI);
+        }
+        ship.set({type:data[component].code,invulnerable:400,stats:88888888,shield:999});
+        ship.set({crystals:~~((Math.trunc(data[component].code/100)**2)*20/3)});
       }
     break;
     case "alien_destroyed":
