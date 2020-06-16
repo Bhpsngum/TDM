@@ -166,6 +166,7 @@ function restartgame(game,isGameOver){
   splitIntoTeams();
   if (!isGameOver) gamelength = game.step+toTick(5+1/6);
   data=randomShips();
+  points=[0,0];
   game.setUIComponent({id: "gamestat", visible: false});
   for (let ship of game.ships){
     ship.emptyWeapons();
@@ -217,7 +218,7 @@ function selectship(ship){
   ship.custom.shiped = false;
   ship.custom.selected = false;
   ship.set({vx:0,vy:0});
-  ship.frag = 0; points=[0,0];
+  ship.frag = 0;
   ship.setUIComponent({
     id: "ship text", position: [39,20,22,50], visible: true,
     components: [
