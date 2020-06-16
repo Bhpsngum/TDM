@@ -120,7 +120,7 @@ var vocabulary = [
   {text: "Wait", icon:"\u0048", key:"T"},
   {text: "Base", icon:"\u0034", key:"B"},
   {text: "Follow", icon:"\u0050", key:"F"},
-],colors=[0,240];
+],colors=[{name:"Red",color:0},{name:"Blue",color:240}];
 
 this.options = {
   custom_map: map,
@@ -166,19 +166,28 @@ function restartgame(game,isGameOver){
   splitIntoTeams();
   if (!isGameOver) gamelength = game.step+toTick(5+1/6);
   data=randomShips();
+  points=[0,0];
   game.setUIComponent({id: "gamestat", visible: false});
   for (let ship of game.ships){
     ship.emptyWeapons();
     selectship(ship);
   }
 }
-function resetgame(game){
+function resetgame(game,isLeave){
   let color, text;
-  if (points[0] > points[1]){
-    text = "Game finished! Red team wins!"; color = getcolor(colors[0]);
-    } else if (points[0] < points[1]){
-    text = "Game finished! Blue team wins!"; color = getcolor(colors[1]);
-  } else text = "Game finished! It's a draw!"; color = "#fff";
+  if (isLeave != -1)
+  {
+    text = `All ${colors[isLeave].name} players left. ${colors[1-isLeave].name} team wins!`;
+    color = getcolor(colors[1-isLeave].color);
+  }
+  else
+  {
+    if (points[0] != points[1]){
+      let win=points.indexOf(Math.max(...points))
+      text = `Game finished! ${colors[win].name} team wins!`; color = getcolor(colors[win].color);
+    }
+    else text = "Game finished! It's a draw!"; color = "#fff";
+  }
   game.setUIComponent({
     id: "gamestat",
     position: [32,18,42,40],
@@ -209,7 +218,7 @@ function selectship(ship){
   ship.custom.shiped = false;
   ship.custom.selected = false;
   ship.set({vx:0,vy:0});
-  ship.frag = 0; points=[0,0];
+  ship.frag = 0;
   ship.setUIComponent({
     id: "ship text", position: [39,20,22,50], visible: true,
     components: [
@@ -331,29 +340,29 @@ this.tick = function (game){
           teamcount[tm||ship.team]++;
         }
         updatescoreboard(game);
-        if (game.step <= gamelength){
-          let steps = gamelength - game.step,msg="";
-          if (steps > toTick(5)) {
-            steps-=toTick(5);
-            msg+="Game starts in: ";
-          }
-          else msg+="Time left: ";
-          let minutes = Math.floor(steps / 3600);
-          let seconds = Math.floor((steps % 3600) / 60);
-          if (seconds < 10) seconds = "0" + seconds;
-          if (minutes < 10) minutes = "0" + minutes;
-          game.setUIComponent({
-            id: "timer",
-            position: [3,28,17,15],
-            visible: true,
-            components: [
-              {type: "text",position:[0,0,80,33],value:msg+`${minutes}:${seconds}`,color:"#fff"},
-            ]
-          });
+        let steps = gamelength - game.step,msg="";
+        if (steps > toTick(5)) {
+          steps-=toTick(5);
+          msg+="Next round starts in: ";
         }
-        else {
+        else msg+="Time left: ";
+        let minutes = Math.floor(steps / 3600);
+        let seconds = Math.floor((steps % 3600) / 60);
+        if (seconds < 10) seconds = "0" + seconds;
+        if (minutes < 10) minutes = "0" + minutes;
+        game.setUIComponent({
+          id: "timer",
+          position: [3,28,17,15],
+          visible: true,
+          components: [
+            {type: "text",position:[0,0,80,33],value:msg+`${minutes}:${seconds}`,color:"#fff"},
+          ]
+        });
+        if (((teamcount.indexOf(0) != -1) || (game.step > gamelength)) && (gamelength-game.step< toTick(5)))
+        {
+          console.log(gamelength, game.step);
           gamelength=game.step+toTick(5.25);
-          resetgame(game);
+          resetgame(game, teamcount.indexOf(0));
         }
       }
     }
@@ -362,10 +371,10 @@ this.tick = function (game){
       position:[0,0,50,50],
       visible:true,
       components:[
-        {type:"box",position:[2,42,10,16],fill:getcolor(colors[0],0.5)},
-        {type:"box",position:[88,42,10,16],fill:getcolor(colors[1],0.5)},
-        {type:"box",position:[88,42,1,16],fill:getcolor(colors[1],1)},
-        {type:"box",position:[11,42,1,16],fill:getcolor(colors[0],1)}
+        {type:"box",position:[2,42,10,16],fill:getcolor(colors[0].color,0.5)},
+        {type:"box",position:[88,42,10,16],fill:getcolor(colors[1].color,0.5)},
+        {type:"box",position:[88,42,1,16],fill:getcolor(colors[1].color,1)},
+        {type:"box",position:[11,42,1,16],fill:getcolor(colors[0].color,1)}
       ]
     });
   }
@@ -480,7 +489,7 @@ function updatestats(game)
   game.setUIComponent(killstats);
 }
 function showkills (game,event){
-  let s,defclr="#FFFFFF",pln={text:event.ship.name,color:getcolor(colors[event.ship.team])};
+  let s,defclr="#FFFFFF",pln={text:event.ship.name,color:getcolor(colors[event.ship.team].color)};
   if (Object.is(event.killer,null))
   s= [
     pln,
@@ -489,7 +498,7 @@ function showkills (game,event){
   ];
   else
   s= [
-    {text:event.killer.name,color:getcolor(colors[event.killer.team])},
+    {text:event.killer.name,color:getcolor(colors[event.killer.team].color)},
     {text:"🗡️",color:defclr},
     pln
   ];
@@ -540,12 +549,11 @@ sort = function(arr){
   return array;
 };
 function updatescoreboard(game){
-  scoreboard.components = [
-    { type:"box",position:[0,0,50,8],fill:getcolor(colors[0])},
-    { type: "text",position: [0,0,50,8],color: "#FFF",value: "Red"},
-    { type:"box",position:[50,0,50,8],fill:getcolor(colors[1])},
-    { type: "text",position: [50,0,50,8],color: "#FFF",value: "Blue"}
-  ];
+  scoreboard.components = [];
+  for (let i=0;i<2;i++) scoreboard.components.push(
+    { type:"box",position:[i*50,0,50,8],fill:getcolor(colors[i].color)},
+    { type: "text",position: [i*50,0,50,8],color: "#FFF",value: colors[i].name},
+  );
   let sc=[sort(t[0]),sort(t[1])],line=1;
   sc[0].slice(10);sc[1].slice(10);
   for (let i=0;i<10;i++){
