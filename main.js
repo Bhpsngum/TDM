@@ -120,7 +120,7 @@ var vocabulary = [
   {text: "Wait", icon:"\u0048", key:"T"},
   {text: "Base", icon:"\u0034", key:"B"},
   {text: "Follow", icon:"\u0050", key:"F"},
-],colors=[{name:"Red",color:0},{name:"Blue",color:240}];
+];
 
 this.options = {
   custom_map: map,
@@ -139,7 +139,6 @@ this.options = {
   lives: 0,
   weapons_store: false,
   soundtrack: "argon.mp3",
-  hues: colors,
   speed_mod: 1.2,
   mines_self_destroy: true,
   mines_destroy_delay: 600
@@ -148,16 +147,42 @@ this.options = {
 function rand(lol){
   return ~~((Math.random() * lol));
 }
-let teamcount = [0,0], ts = [
-    {hue:0,x:-215,y:0}, {hue:240,x:215,y:0}
-], t=[[],[]];
+let teams = 
+{
+  proto: {
+    x: 215,
+    y: 0
+  },
+  points: [0,0],
+  ships: [[],[]],
+  names: ["Red", "Blue"],
+  count: [0,0],
+  hues: [0,240],
+  x: [-1, 1]
+}
 function splitIntoTeams(){
-  for(let i=0, ship=game.ships[i], t=i%2; i<game.ships.length; i++) ship.set({hue:ts[t].hue,team:t,x:ts[t].x,y:ts[t].y,invulnerable:600});
+  for(let i=0, ship=game.ships[i], t=i%2; i<game.ships.length; i++) ship.set(
+    {
+      hue:teams.hues[t],
+      team:t,
+      x:teams.x[t]*teams.proto.x,
+      y:teams.proto.y,
+      invulnerable:600
+    }
+  );
 }
 
 function setteam(ship){
-  let t = teamcount.indexOf(Math.min(...teamcount));
-  ship.set({hue:ts[t].hue,team:t,x:ts[t].x,y:ts[t].y,invulnerable:600});
+  let t = teams.count.indexOf(Math.min(...teams.count));
+  ship.set(
+    {
+      hue:teams.hues[t],
+      team:t,
+      x:teams.x[t]*teams.proto.x,
+      y:teams.proto.y,
+      invulnerable:600
+    }
+  );
   return t;
 }
 function restartgame(game,isGameOver){
@@ -166,7 +191,7 @@ function restartgame(game,isGameOver){
   splitIntoTeams();
   if (!isGameOver) gamelength = game.step+toTick(5+1/6);
   data=randomShips();
-  points=[0,0];
+  teams.points = [0,0];
   game.setUIComponent({id: "gamestat", visible: false});
   for (let ship of game.ships){
     ship.emptyWeapons();
@@ -177,14 +202,14 @@ function resetgame(game,isLeave){
   let color, text;
   if (isLeave != -1)
   {
-    text = `All ${colors[isLeave].name} players left. ${colors[1-isLeave].name} team wins!`;
-    color = getcolor(colors[1-isLeave].color);
+    text = `All ${teams.names[isLeave]} players left. ${teams.names[1-isLeave]} team wins!`;
+    color = getcolor(teams.hues[1-isLeave]);
   }
   else
   {
-    if (points[0] != points[1]){
-      let win=points.indexOf(Math.max(...points))
-      text = `Game finished! ${colors[win].name} team wins!`; color = getcolor(colors[win].color);
+    if (teams.points[0] != teams.points[1]){
+      let win=teams.points.indexOf(Math.max(...teams.points));
+      text = `Game finished! ${teams.names[win]} team wins!`; color = getcolor(teams.hues[win]);
     }
     else text = "Game finished! It's a draw!"; color = "#fff";
   }
@@ -315,9 +340,9 @@ this.tick = function (game){
       }
       else
       {
-        t=[[],[]];
-        points = [0,0];
-        teamcount = [0,0];
+        teams.ships=[[],[]];
+        teams.points = [0,0];
+        teams.count = [0,0];
         if (!game.custom.alien){
           game.custom.alien = true;
           data=randomShips();
@@ -335,9 +360,9 @@ this.tick = function (game){
           ship.custom.wait = false;
           ship.set({score:ship.frag});
           setIdle(ship);
-          t[tm||ship.team].push(ship);
-          points[tm||ship.team] += ship.frag;
-          teamcount[tm||ship.team]++;
+          teams.ships[tm||ship.team].push(ship);
+          teams.points[tm||ship.team] += ship.frag;
+          teams.count[tm||ship.team]++;
         }
         updatescoreboard(game);
         let steps = gamelength - game.step,msg="";
@@ -358,11 +383,11 @@ this.tick = function (game){
             {type: "text",position:[0,0,80,33],value:msg+`${minutes}:${seconds}`,color:"#fff"},
           ]
         });
-        if (((teamcount.indexOf(0) != -1) || (game.step > gamelength)) && (gamelength-game.step< toTick(5)))
+        if (((teams.count.indexOf(0) != -1) || (game.step > gamelength)) && (gamelength-game.step< toTick(5)))
         {
           console.log(gamelength, game.step);
           gamelength=game.step+toTick(5.25);
-          resetgame(game, teamcount.indexOf(0));
+          resetgame(game, teams.count.indexOf(0));
         }
       }
     }
@@ -371,10 +396,10 @@ this.tick = function (game){
       position:[0,0,50,50],
       visible:true,
       components:[
-        {type:"box",position:[2,42,10,16],fill:getcolor(colors[0].color,0.5)},
-        {type:"box",position:[88,42,10,16],fill:getcolor(colors[1].color,0.5)},
-        {type:"box",position:[88,42,1,16],fill:getcolor(colors[1].color,1)},
-        {type:"box",position:[11,42,1,16],fill:getcolor(colors[0].color,1)}
+        {type:"box",position:[2,42,10,16],fill:getcolor(teams.hues[0],0.5)},
+        {type:"box",position:[88,42,10,16],fill:getcolor(teams.hues[1],0.5)},
+        {type:"box",position:[88,42,1,16],fill:getcolor(teams.hues[1],1)},
+        {type:"box",position:[11,42,1,16],fill:getcolor(teams.hues[0],1)}
       ]
     });
   }
@@ -387,11 +412,7 @@ this.event = function (event,game){
     case "ship_spawned":
       var ship = event.ship;
       var ship_level = Math.trunc(ship.type / 100);
-      if (ship !== null){
-        if (ship.team === 0) ship.set({x:-215,y:0,crystals:((Math.round(ship_level||0)**2)*20/3),invulnerable:400,stats:88888888});
-          else
-        if (ship.team === 1) ship.set({x:215,y:0,crystals:((Math.round(ship_level||0)**2)*20/3),invulnerable:400,stats:88888888});
-      }
+      if (!Object.is(ship,null)) ship.set({x:teams.proto.x*teams.x[ship.team],y:teams.proto.y,crystals:((Math.round(ship_level||0)**2)*20/3),invulnerable:400,stats:88888888});
     break;
     case "ship_destroyed":
       showkills(game,event);
@@ -445,7 +466,6 @@ function distance(x,y){
 }
 
 function rekt(ship,num){
-  let p=[-1,1];
   if (ship.shield<num){
     let val=ship.crystals + ship.shield;
     if (val < num) ship.set({kill:true});
@@ -460,8 +480,8 @@ function isRange(a,b,c){
 
 function checkteambase(){
   for (let ship of game.ships){
-    let teams = [1,-1],u=ship.team;
-    if (isRange(190*teams[u],240*teams[u],ship.x) && isRange(-35,35,ship.y)) rekt(ship,15*Math.trunc(ship.type/100));
+    let u=1-ship.team;
+    if (isRange(190*teams.x[u],240*teams.x[u],ship.x) && isRange(-35,35,ship.y)) rekt(ship,15*Math.trunc(ship.type/100));
   }
 }
 
@@ -489,7 +509,7 @@ function updatestats(game)
   game.setUIComponent(killstats);
 }
 function showkills (game,event){
-  let s,defclr="#FFFFFF",pln={text:event.ship.name,color:getcolor(colors[event.ship.team].color)};
+  let s,defclr="#FFFFFF",pln={text:event.ship.name,color:getcolor(teams.hues[event.ship.team])};
   if (Object.is(event.killer,null))
   s= [
     pln,
@@ -498,7 +518,7 @@ function showkills (game,event){
   ];
   else
   s= [
-    {text:event.killer.name,color:getcolor(colors[event.killer.team].color)},
+    {text:event.killer.name,color:getcolor(teams.hues[event.killer.team])},
     {text:"🗡️",color:defclr},
     pln
   ];
@@ -551,10 +571,10 @@ sort = function(arr){
 function updatescoreboard(game){
   scoreboard.components = [];
   for (let i=0;i<2;i++) scoreboard.components.push(
-    { type:"box",position:[i*50,0,50,8],fill:getcolor(colors[i].color)},
-    { type: "text",position: [i*50,0,50,8],color: "#FFF",value: colors[i].name},
+    { type:"box",position:[i*50,0,50,8],fill:getcolor(teams.hues[i])},
+    { type: "text",position: [i*50,0,50,8],color: "#FFF",value: teams.names[i]},
   );
-  let sc=[sort(t[0]),sort(t[1])],line=1;
+  let sc=[sort(teams.ships[0]),sort(teams.ships[1])],line=1;
   sc[0].slice(10);sc[1].slice(10);
   for (let i=0;i<10;i++){
     for (let j=0;j<2;j++){
@@ -592,16 +612,16 @@ function outputscoreboard(game,tm){
       position: [40,6,26,20],
       visible: true,
       components: [
-        {type: "text",position:[-25+8,0,80,33],value:points[0],color:"#ff0000"},
+        {type: "text",position:[-25+8,0,80,33],value:teams.points[0],color:getcolor(teams.hues[0])},
         {type: "text",position:[-2,0,80,33],value:`-`,color:"#fff"},
-        {type: "text",position:[14,0,80,33],value:points[1],color:"#0000ff"},
+        {type: "text",position:[14,0,80,33],value:teams.points[1],color:getcolor(teams.hues[1])},
       ]
     });
     scoreboard.components = [...origin];
   }
 }
 
-var points=[0,0], gamelength = toTick(5.25);
+var gamelength = toTick(5.25);
 
 function spawnSecondary(){
   var range = 10;
