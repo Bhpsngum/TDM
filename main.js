@@ -148,22 +148,17 @@ this.options = {
 function rand(lol){
   return ~~((Math.random() * lol));
 }
-
-function splitIntoTeams(){
-  let ts = [
+let teamcount = [0,0], ts = [
     {hue:0,x:-215,y:0}, {hue:240,x:215,y:0}
-  ];
+], t=[[],[]];
+function splitIntoTeams(){
   for(let i=0, ship=game.ships[i], t=i%2; i<game.ships.length; i++) ship.set({hue:ts[t].hue,team:t,x:ts[t].x,y:ts[t].y,invulnerable:600});
 }
 
 function setteam(ship){
-  var ts = [
-    {hue:0,x:-215,y:0}, {hue:240,x:215,y:0}
-  ];
-  for(var i=0; i<game.ships.length; i++){
-    t = i%2;
-    ship.set({hue:ts[t].hue,team:t,x:ts[t].x,y:ts[t].y,invulnerable:600});
-  }
+  let t = teamcount.indexOf(Math.min(...teamcount));
+  ship.set({hue:ts[t].hue,team:t,x:ts[t].x,y:ts[t].y,invulnerable:600});
+  return t;
 }
 function restartgame(game,isGameOver){
   yeetalien(game);
@@ -311,6 +306,9 @@ this.tick = function (game){
       }
       else
       {
+        t=[[],[]];
+        points = [0,0];
+        teamcount = [0,0];
         if (!game.custom.alien){
           game.custom.alien = true;
           data=randomShips();
@@ -318,15 +316,19 @@ this.tick = function (game){
         }
         game.setUIComponent({id:"wait",visible:false});
         for (let ship of game.ships){
+          let tm;
           if (!ship.custom.init){
             ship.custom.init = true;
             selectship(ship);
-            setteam(ship)
+            tm=setteam(ship);
             ship.frag=0;
           }
           ship.custom.wait = false;
           ship.set({score:ship.frag});
           setIdle(ship);
+          t[tm||ship.team].push(ship);
+          points[tm||ship.team] += ship.frag;
+          teamcount[tm||ship.team]++;
         }
         updatescoreboard(game);
         if (game.step <= gamelength){
@@ -538,13 +540,6 @@ sort = function(arr){
   return array;
 };
 function updatescoreboard(game){
-  let t=[[],[]];
-  points = [0,0];
-  for (let ship of game.ships)
-  {
-    t[ship.team].push(ship);
-    points[ship.team] += ship.frag;
-  }
   scoreboard.components = [
     { type:"box",position:[0,0,50,8],fill:getcolor(colors[0])},
     { type: "text",position: [0,0,50,8],color: "#FFF",value: "Red"},
