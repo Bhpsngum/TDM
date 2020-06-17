@@ -166,7 +166,7 @@ function splitIntoTeams(game){
   for (let i=0; list.length > 0; i++)
   {
     let t=i%2, id = rand(list.length);
-    game.ships[id].set(
+    game.ships[list[id]].set(
       {
         hue:teams.hues[t],
         team:t,
@@ -517,7 +517,7 @@ function showkills (game,event){
   if (Object.is(event.killer,null))
   s= [
     pln,
-    {text:"committed suicide",color:defclr},
+    {text:"killed themselves",color:defclr},
     {text:"",color:defclr}
   ];
   else
