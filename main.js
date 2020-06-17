@@ -160,9 +160,9 @@ let teams =
   hues: [0,240],
   x: [-1, 1]
 }
-function splitIntoTeams(){
-  let list=[], len = game.ships.length;
-  for (let i=0;i<=len;i++) list.push(i);
+function splitIntoTeams(game){
+  let list=[];
+  for (let i=0;i<game.ships.length;i++) list.push(i);
   for (let i=0; list.length > 0; i++)
   {
     let t=i%2, id = rand(list.length);
@@ -195,7 +195,7 @@ function setteam(ship){
 function restartgame(game,isGameOver){
   yeetalien(game);
   game.addAlien({x:195,y:195,level:2});game.addAlien({x:-195,y:195,level:2});game.addAlien({x:-195,y:-195,level:2});game.addAlien({x:195,y:-195,level:2});
-  splitIntoTeams();
+  splitIntoTeams(game);
   if (!isGameOver) gamelength = game.step+toTick(5+1/6);
   data=randomShips();
   teams.points = [0,0];
