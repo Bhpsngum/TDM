@@ -524,7 +524,7 @@ function showkills (game,event){
   {
     s= [
       {text:event.killer.name,color:getcolor(teams.hues[event.killer.team])},
-      {text:"🗡️",color:defclr},
+      {text:"killed",color:defclr},
       pln
     ];
     teams.points[event.killer.team]++;
