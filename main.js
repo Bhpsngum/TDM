@@ -180,7 +180,13 @@ function splitIntoTeams(game){
 }
 
 function setteam(ship){
-  let t = teams.count.indexOf(Math.min(...teams.count));
+  let t;
+  if (!game.custom.auto && game.ships.length > 1)
+  {
+    t=ship.team;
+    game.custom.auto = true;
+  }
+  else t = teams.count.indexOf(Math.min(...teams.count));
   ship.set(
     {
       hue:teams.hues[t],
@@ -257,14 +263,14 @@ function selectship(ship){
       { type: "text",position:[0,0,100,60],value:"Choose your ship for this round",color:"#FFFFFF"},
     ]
   });
-  shipUI[0].components = [
-    { type:"box",position:[0,0,100,100],fill:"rgb(54,57,64,0.6)",stroke:"#fff",width:5},
-    { type: "text",position:[22.5,15,50,30],value:data[0].name,color:"#FFFFFF"},
-  ];
-  shipUI[1].components = [
-    { type:"box",position:[0,0,100,100],fill:"rgb(54,57,64,0.6)",stroke:"#fff",width:5},
-    { type: "text",position:[22.5,15,50,30],value:data[1].name,color:"#FFFFFF"},
-  ];
+  for (let i=0;i<2;i++)
+  {
+    let name = data[i].name,len=5*name.length;
+    shipUI[i].components = [
+      { type:"box",position:[0,0,100,100],fill:"rgb(54,57,64,0.6)",stroke:"#fff",width:5},
+      { type: "text",position:[(100-len)/2,15,len,30],value:name,color:"#FFFFFF"},
+    ];
+  }
   for (let UI of shipUI) ship.setUIComponent(UI);
   setTimeout(function(){
     ship.setUIComponent({id:"ship text",visible:false});
