@@ -147,7 +147,7 @@ this.options = {
 function rand(lol){
   return ~~((Math.random() * lol));
 }
-let teams = 
+let teams =
 {
   proto: {
     x: 215,
@@ -161,7 +161,7 @@ let teams =
   x: [-1, 1]
 }
 function splitIntoTeams(){
-  for(let i=0, ship=game.ships[i], t=i%2; i<game.ships.length; i++) ship.set(
+  for(let i=0; t=i%2,i<game.ships.length; i++) game.ships[i].set(
     {
       hue:teams.hues[t],
       team:t,
@@ -383,9 +383,8 @@ this.tick = function (game){
             {type: "text",position:[0,0,80,33],value:msg+`${minutes}:${seconds}`,color:"#fff"},
           ]
         });
-        if (((teams.count.indexOf(0) != -1) || (game.step > gamelength)) && (gamelength-game.step< toTick(5)))
+        if (((teams.count.indexOf(0) != -1) || (game.step >= gamelength)) && (gamelength-game.step< toTick(5)))
         {
-          console.log(gamelength, game.step);
           gamelength=game.step+toTick(5.25);
           resetgame(game, teams.count.indexOf(0));
         }
@@ -765,7 +764,7 @@ var cube = {
     fixed: true
   }
 };
- 
+
 function addcube(x,y,w,h,z){
   game.setObject({
     id: "cube"+x+y,
@@ -778,5 +777,5 @@ function addcube(x,y,w,h,z){
 
 for (let i=0; i<15; i++){
   addcube(-237.5,-35+i*5,.9,1,.5);
-  addcube(237.5,-35+i*5,.9,1,.5);  
+  addcube(237.5,-35+i*5,.9,1,.5);
 }
