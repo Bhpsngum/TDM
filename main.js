@@ -161,11 +161,11 @@ let teams =
   x: [-1, 1]
 }
 function splitIntoTeams(){
-  let list=[];
-  for (let i=0;i<game.ships.length;i++) list.push(i);
+  let list=[], len = game.ships.length;
+  for (let i=0;i<=len;i++) list.push(i);
   for (let i=0; list.length > 0; i++)
   {
-    let t=i%2, id = random(list.length);
+    let t=i%2, id = rand(list.length);
     game.ships[id].set(
       {
         hue:teams.hues[t],
@@ -178,6 +178,7 @@ function splitIntoTeams(){
     list.splice(id, 1);
   }
 }
+
 function setteam(ship){
   let t = teams.count.indexOf(Math.min(...teams.count));
   ship.set(
@@ -347,7 +348,6 @@ this.tick = function (game){
       else
       {
         teams.ships=[[],[]];
-        teams.points = [0,0];
         teams.count = [0,0];
         if (!game.custom.alien){
           game.custom.alien = true;
@@ -367,7 +367,6 @@ this.tick = function (game){
           ship.set({score:ship.frag});
           setIdle(ship);
           teams.ships[tm||ship.team].push(ship);
-          teams.points[tm||ship.team] += ship.frag;
           teams.count[tm||ship.team]++;
         }
         updatescoreboard(game);
@@ -652,7 +651,7 @@ game.setObject({
   type: base,
   position: {x:195,y:0,z:-2},
   rotation: {x:0,y:0,z:0},
-  scale: {x:4,y:80,z:0}
+  scale: {x:4,y:90,z:0}
 });
 
 var base2 = {
@@ -667,7 +666,7 @@ game.setObject({
   type: base2,
   position: {x:-195,y:0,z:-2},
   rotation: {x:0,y:0,z:0},
-  scale: {x:4,y:80,z:0}
+  scale: {x:4,y:90,z:0}
 });
 
 var gate = {
