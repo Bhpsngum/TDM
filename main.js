@@ -642,7 +642,7 @@ game.setObject({
   type: base,
   position: {x:195,y:0,z:-2},
   rotation: {x:0,y:0,z:0},
-  scale: {x:4,y:90,z:0}
+  scale: {x:4,y:80,z:0}
 });
 
 var base2 = {
@@ -657,7 +657,7 @@ game.setObject({
   type: base2,
   position: {x:-195,y:0,z:-2},
   rotation: {x:0,y:0,z:0},
-  scale: {x:4,y:90,z:0}
+  scale: {x:4,y:80,z:0}
 });
 
 var gate = {
