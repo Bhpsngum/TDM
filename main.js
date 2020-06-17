@@ -515,11 +515,14 @@ function showkills (game,event){
     {text:"",color:defclr}
   ];
   else
-  s= [
-    {text:event.killer.name,color:getcolor(teams.hues[event.killer.team])},
-    {text:"🗡️",color:defclr},
-    pln
-  ];
+  {
+    s= [
+      {text:event.killer.name,color:getcolor(teams.hues[event.killer.team])},
+      {text:"🗡️",color:defclr},
+      pln
+    ];
+    teams.points[event.killer.team]++;
+  }
   let size=0,line=killstats.components.length/3;
   if (line >=3)
   {
