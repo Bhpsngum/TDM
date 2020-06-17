@@ -161,21 +161,16 @@ let teams =
   x: [-1, 1]
 }
 function splitIntoTeams(){
-  for(let i=0;i<game.ships.length; i++)
-  {
-    let t=i%2;
-    game.ships[i].set(
-      {
-        hue:teams.hues[t],
-        team:t,
-        x:teams.x[t]*teams.proto.x,
-        y:teams.proto.y,
-        invulnerable:600
-      }
-    );
-  }
+  for(let i=0; t=i%2,i<game.ships.length; i++) game.ships[i].set(
+    {
+      hue:teams.hues[t],
+      team:t,
+      x:teams.x[t]*teams.proto.x,
+      y:teams.proto.y,
+      invulnerable:600
+    }
+  );
 }
-
 function setteam(ship){
   let t = teams.count.indexOf(Math.min(...teams.count));
   ship.set(
