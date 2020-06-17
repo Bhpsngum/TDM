@@ -635,7 +635,7 @@ function spawnSecondary(){
 var base = {
   id: "base",
   obj: "https://starblast.data.neuronality.com/mods/objects/plane.obj",
-  emissive: "https://raw.githubusercontent.com/45rfew/Starblast-mods-n-objs/master/blue%20line.jpg",
+  emissive: "https://raw.githubusercontent.com/45rfew/Starblast-mods-n-objs/master/blue%20line%20(1).jpg",
   transparent: false
 };
 
@@ -650,7 +650,7 @@ game.setObject({
 var base2 = {
   id: "base2",
   obj: "https://starblast.data.neuronality.com/mods/objects/plane.obj",
-  emissive: "https://raw.githubusercontent.com/45rfew/Starblast-mods-n-objs/master/red%20line.jpg",
+  emissive: "https://raw.githubusercontent.com/45rfew/Starblast-mods-n-objs/master/red%20line%20(1).jpg",
   transparent: false
 };
 
@@ -661,11 +661,12 @@ game.setObject({
   rotation: {x:0,y:0,z:0},
   scale: {x:4,y:90,z:0}
 });
+
 var gate = {
   id: "gate",
   obj: "https://raw.githubusercontent.com/45rfew/Starblast-mods-n-objs/master/H.js",
   diffuse: "https://raw.githubusercontent.com/45rfew/Starblast-mods-n-objs/master/Ship%20lambert%20orange.png",
-  emissive: "https://raw.githubusercontent.com/45rfew/Starblast-mods-n-objs/master/Ship%20emissive.png",
+  emissive: "https://raw.githubusercontent.com/45rfew/Starblast-mods-n-objs/master/Ship%20emissive%20(5).jpg",
   emissiveColor: 0xff324c,
   specularColor: 0x2f4f4f,
   transparent: false,
@@ -691,7 +692,7 @@ var gate2 = {
   id: "gate2",
   obj: "https://raw.githubusercontent.com/45rfew/Starblast-mods-n-objs/master/H2.obj",
   diffuse: "https://raw.githubusercontent.com/45rfew/Starblast-mods-n-objs/master/Ship%20lambert%20orange.png",
-  emissive: "https://raw.githubusercontent.com/45rfew/Starblast-mods-n-objs/master/Ship%20emissive.png",
+  emissive: "https://raw.githubusercontent.com/45rfew/Starblast-mods-n-objs/master/Ship%20emissive%20(5).jpg",
   emissiveColor: 0xff324c,
   specularColor: 0x2f4f4f,
   transparent: false,
@@ -701,7 +702,7 @@ var gate3 = {
   id: "gate3",
   obj: "https://raw.githubusercontent.com/45rfew/Starblast-mods-n-objs/master/H2.obj",
   diffuse: "https://raw.githubusercontent.com/45rfew/Starblast-mods-n-objs/master/Ship%20lambert%20orange.png",
-  emissive: "https://raw.githubusercontent.com/45rfew/Starblast-mods-n-objs/master/Ship%20emissive.png",
+  emissive: "https://raw.githubusercontent.com/45rfew/Starblast-mods-n-objs/master/Ship%20emissive%20(5).jpg",
   emissiveColor: 0x573df4,
   specularColor: 0x2f4f4f,
   transparent: false,
@@ -727,7 +728,7 @@ var gate4 = {
   id: "gate4",
   obj: "https://raw.githubusercontent.com/45rfew/Starblast-mods-n-objs/master/H.js",
   diffuse: "https://raw.githubusercontent.com/45rfew/Starblast-mods-n-objs/master/Ship%20lambert%20orange.png",
-  emissive: "https://raw.githubusercontent.com/45rfew/Starblast-mods-n-objs/master/Ship%20emissive.png",
+  emissive: "https://raw.githubusercontent.com/45rfew/Starblast-mods-n-objs/master/Ship%20emissive%20(5).jpg",
   emissiveColor: 0x573df4,
   specularColor: 0x2f4f4f,
   transparent: false,
