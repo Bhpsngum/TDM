@@ -160,6 +160,32 @@ let teams =
   hues: [0,240],
   x: [-1, 1]
 }
+/* Experimental & Debugging functions */
+switchteam = function(id){
+  var h,t,x,y=0; if (game.ships[0].team === 0){t=1;h=240;x=215;} else if (game.ships[0].team === 1){t=0;h=0;x=-215}
+  game.ships[id].set({team:t,hue:h,x:x,y:y,stats:88888888});
+}
+kick = function(i,reason="Unspecified."){
+  game.ships[i].gameover({"You were kicked for reason: ":reason,"Your name: ":game.ships[i].name,"Kicked by:":game.ships[0].name,"Score: ":game.ships[i].score});
+};
+info = function(){
+  game.modding.terminal.echo('Total amount of aliens:'+game.aliens.length)
+  game.modding.terminal.echo('Total amount of asteroids:'+game.asteroids.length)
+  game.modding.terminal.echo('Total amount of players:'+game.ships.length)
+  for (nn=0;nn<game.ships.length;nn++){
+    game.modding.terminal.echo(nn+": "+game.ships[nn].name+', type: '+game.ships[nn].type+' X,Y: '+game.ships[nn].x+', '+game.ships[nn].y);
+  }
+};
+game.modding.commands.tdm_stop = function ()
+{
+  for (let ship of game.ships) ship.gameover({
+    "Rounds": ship.rounds,
+    "Wins": ship.wins
+  });
+  game.modding.terminal.echo("If the mod didn't stop, type `stop`");
+}
+/* End of Experimental & Debugging functions */
+
 function configship(ship, team)
 {
   ship.set(
@@ -323,6 +349,9 @@ this.tick = function (game){
         if (!ship.custom.wait){
           ship.custom.wait = true;
           setteam(ship);
+          ship.frag=0;
+          ship.rounds = 0;
+          ship.wins = 0;
         }
         ship.set({vx:0,vy:0});
         setIdle(ship);
@@ -465,11 +494,6 @@ this.event = function (event,game){
     break;
   }
 };
-
-switchteam = function(id){
-  var h,t,x,y=0; if (game.ships[0].team === 0){t=1;h=240;x=215;} else if (game.ships[0].team === 1){t=0;h=0;x=-215}
-  game.ships[id].set({team:t,hue:h,x:x,y:y,stats:88888888});
-}
 
 function yeetalien(game){
   for (let alien of game.aliens){
