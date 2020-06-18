@@ -147,8 +147,8 @@ this.options = {
 function rand(lol){
   return ~~((Math.random() * lol));
 }
-
-let teams = {
+let teams =
+{
   proto: {
     x: 215,
     y: 0
@@ -159,44 +159,43 @@ let teams = {
   count: [0,0],
   hues: [0,240],
   x: [-1, 1]
-};
-
+}
+function configship(ship, team)
+{
+  ship.set(
+    {
+      hue:teams.hues[team],
+      team:team,
+      x:teams.x[team]*teams.proto.x,
+      y:teams.proto.y,
+      invulnerable:600
+    }
+  );
+}
 function splitIntoTeams(game){
   let list=[];
   for (let i=0;i<game.ships.length;i++) list.push(i);
-  for (let i=0; list.length > 0; i++){
+  for (let i=0; list.length > 0; i++)
+  {
     let t=i%2, id = rand(list.length);
-    game.ships[list[id]].set({
-      hue:teams.hues[t],
-      team:t,
-      x:teams.x[t]*teams.proto.x,
-      y:teams.proto.y,
-      invulnerable:600
-    });
+    configship(game.ships[list[id]], t);
     list.splice(id, 1);
   }
 }
 
 function setteam(ship){
   let t;
-  if (!game.custom.auto && game.ships.length > 1){
+  if (!game.custom.auto && game.ships.length > 1)
+  {
     t=ship.team;
     game.custom.auto = true;
   }
   else t = teams.count.indexOf(Math.min(...teams.count));
-  ship.set({
-    hue:teams.hues[t],
-    team:t,
-    x:teams.x[t]*teams.proto.x,
-    y:teams.proto.y,
-    invulnerable:600
-  });
+  configship(ship, t);
   return t;
 }
-
 function restartgame(game,isGameOver){
   yeetalien(game);
-  game.setCustomMap(map);
   game.addAlien({x:195,y:195,level:2});game.addAlien({x:-195,y:195,level:2});game.addAlien({x:-195,y:-195,level:2});game.addAlien({x:195,y:-195,level:2});
   splitIntoTeams(game);
   if (!isGameOver) gamelength = game.step+toTick(5+1/6);
@@ -208,19 +207,27 @@ function restartgame(game,isGameOver){
     selectship(ship);
   }
 }
-
 function resetgame(game,isLeave){
-  let color, text;
-  if (isLeave != -1){
-    text = `All ${teams.names[isLeave]} players left. ${teams.names[1-isLeave]} team wins!`;
-    color = getcolor(teams.hues[1-isLeave]);
+  let color, text, win;
+  if (isLeave != -1)
+  {
+    win=1-isLeave;
+    text = `All ${teams.names[isLeave]} players left. ${teams.names[win]} team wins!`;
+    color = getcolor(teams.hues[win]);
   }
-  else {
+  else
+  {
     if (teams.points[0] != teams.points[1]){
-      let win=teams.points.indexOf(Math.max(...teams.points));
-      text = `Game finished! ${teams.names[win]} team wins!`; color = getcolor(teams.hues[win]);
+      win=teams.points.indexOf(Math.max(...teams.points));
+      text = `Game finished! ${teams.names[win]} team wins!`;
+      color = getcolor(teams.hues[win]);
     }
     else text = "Game finished! It's a draw!"; color = "#fff";
+  }
+  for (let ship of game.ships)
+  {
+    if (ship.team === win) ship.wins++;
+    ship.rounds++;
   }
   game.setUIComponent({
     id: "gamestat",
@@ -234,7 +241,6 @@ function resetgame(game,isLeave){
     restartgame(game,1);
   }, 5000);
 }
-
 let shipUI = [
   {
     id: "0",
@@ -249,7 +255,6 @@ let shipUI = [
     visible: true
   }
 ];
-
 function selectship(ship){
   ship.custom.shiped = false;
   ship.custom.selected = false;
@@ -261,7 +266,8 @@ function selectship(ship){
       { type: "text",position:[0,0,100,60],value:"Choose your ship for this round",color:"#FFFFFF"},
     ]
   });
-  for (let i=0;i<2;i++){
+  for (let i=0;i<2;i++)
+  {
     let name = data[i].name,len=5*name.length;
     shipUI[i].components = [
       { type:"box",position:[0,0,100,100],fill:"rgb(54,57,64,0.6)",stroke:"#fff",width:5},
@@ -280,34 +286,33 @@ function selectship(ship){
     }
   }, 10000);
 }
-
-function toTick(minutes){
+function toTick(minutes)
+{
   return minutes*3600
 }
-
 function randomShips(){
   let round_ships=[],s=JSON.parse(JSON.stringify(select_ships));
   let rarity = [[2,7],[3,11],[4,16],[5,23],[6,30],[7,13]];
   let field=[];
-  while (field.length<100){
+  while (field.length<100)
+  {
     for (let i=0;i<6;i++)
-      if (rarity[i][1] > 0){
-        field.push(rarity[i][0])
-        rarity[i][1]--;
+      if (rarity[i][1] > 0)
+      {
+          field.push(rarity[i][0])
+          rarity[i][1]--;
       }
   }
   let r = field[rand(100)]-2;
   for (let i of [,,]) round_ships.push(...s[r].splice(rand(s[r].length),1));
   return round_ships;
 }
-
 let data=randomShips(),delayed = 0;
-
-function setIdle(ship){
+function setIdle(ship)
+{
   if (gamelength-game.step > toTick(5) || !ship.custom.shiped) ship.set({idle:true});
   else ship.set({idle:false});
 }
-
 this.tick = function (game){
   if (game.step % 30 === 0){
     if (game.ships.length <= 1){
@@ -348,7 +353,9 @@ this.tick = function (game){
       if (delayed) {
         restartgame(game);
         delayed=0;
-      } else {
+      }
+      else
+      {
         teams.ships=[[],[]];
         teams.count = [0,0];
         if (!game.custom.alien){
@@ -364,6 +371,8 @@ this.tick = function (game){
             selectship(ship);
             tm=setteam(ship);
             ship.frag=0;
+            ship.rounds = 0;
+            ship.wins = 0;
           }
           ship.custom.wait = false;
           ship.set({score:ship.frag});
@@ -390,7 +399,8 @@ this.tick = function (game){
             {type: "text",position:[0,0,80,33],value:msg+`${minutes}:${seconds}`,color:"#fff"},
           ]
         });
-        if (((teams.count.indexOf(0) != -1) || (game.step >= gamelength)) && (gamelength-game.step< toTick(5))){
+        if (((teams.count.indexOf(0) != -1) || (game.step >= gamelength)) && (gamelength-game.step< toTick(5)))
+        {
           gamelength=game.step+toTick(5.25);
           resetgame(game, teams.count.indexOf(0));
         }
@@ -426,12 +436,16 @@ this.event = function (event,game){
     case "ui_component_clicked":
       var ship = event.ship;
       var component = event.id;
-      if (["0","1"].indexOf(component) != -1){
-        if (gamelength-game.step <= toTick(5)){
+      if (["0","1"].indexOf(component) != -1)
+      {
+        if (gamelength-game.step <= toTick(5))
+        {
           ship.setUIComponent({id:"0",visible:false});
           ship.setUIComponent({id:"1",visible:false});
           ship.setUIComponent({id:"ship text",visible:false});
-        } else {
+        }
+        else
+        {
           for (let i=0;i<2;i++) shipUI[i].components = [...shipUI[i].components.slice(0,2)]
           shipUI[component].components.push({type: "text",position:[22.5,50,50,30],value:"✓",color:"#FFFFFF"});
           for (let UI of shipUI) ship.setUIComponent(UI);
@@ -503,13 +517,12 @@ scoreboard = {
   visible: true,
   components: []
 };
-
-function updatestats(game){
+function updatestats(game)
+{
   killstats.components.splice(0,3);
   for (let i=0;i<killstats.components.length;i++) killstats.components[i].position[1]-=5;
   game.setUIComponent(killstats);
 }
-
 function showkills (game,event){
   let s,defclr="#FFFFFF",pln={text:event.ship.name,color:getcolor(teams.hues[event.ship.team])};
   if (Object.is(event.killer,null))
@@ -518,7 +531,8 @@ function showkills (game,event){
     {text:"killed themselves",color:defclr},
     {text:"",color:defclr}
   ];
-  else {
+  else
+  {
     s= [
       {text:event.killer.name,color:getcolor(teams.hues[event.killer.team])},
       {text:"killed",color:defclr},
@@ -527,11 +541,13 @@ function showkills (game,event){
     teams.points[event.killer.team]++;
   }
   let size=0,line=killstats.components.length/3;
-  if (line >=3){
+  if (line >=3)
+  {
     updatestats(game);
     line--;
   }
-  for (let i=0;i<s.length;i++){
+  for (let i=0;i<s.length;i++)
+  {
     let text = " "+s[i].text+" ";
     killstats.components.push(
       {type:"text",position:[size+3,(line+1)*5-8,text.length,20],value:text,color:s[i].color}
@@ -570,7 +586,6 @@ sort = function(arr){
   }
   return array;
 };
-
 function updatescoreboard(game){
   scoreboard.components = [];
   for (let i=0;i<2;i++) scoreboard.components.push(
@@ -647,7 +662,7 @@ game.setObject({
   type: base,
   position: {x:195,y:0,z:-2},
   rotation: {x:0,y:0,z:0},
-  scale: {x:4,y:80,z:0}
+  scale: {x:4,y:90,z:0}
 });
 
 var base2 = {
@@ -662,7 +677,7 @@ game.setObject({
   type: base2,
   position: {x:-195,y:0,z:-2},
   rotation: {x:0,y:0,z:0},
-  scale: {x:4,y:80,z:0}
+  scale: {x:4,y:90,z:0}
 });
 
 var gate = {
@@ -782,11 +797,4 @@ function addcube(x,y,w,h,z){
 for (let i=0; i<15; i++){
   addcube(-237.5,-35+i*5,.9,1,.5);
   addcube(237.5,-35+i*5,.9,1,.5);
-}
-
-for (let i=0; i<14; i++){
-  addcube(-264.5-i*3,-38,.7,.7,5);
-  addcube(-264.5-i*3,38,.7,.7,5);
-  addcube(264.5+i*3,38,.7,.7,.5);
-  addcube(264.5+i*3,-38,.7,.7,5);
 }
