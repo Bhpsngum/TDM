@@ -176,7 +176,7 @@ info = function(){
     game.modding.terminal.echo(nn+": "+game.ships[nn].name+', type: '+game.ships[nn].type+' X,Y: '+game.ships[nn].x+', '+game.ships[nn].y);
   }
 };
-game.modding.commands.tdm_stop = function ()
+game.modding.commands.tstop = function ()
 {
   for (let ship of game.ships) ship.gameover({
     "Rounds": ship.rounds,
