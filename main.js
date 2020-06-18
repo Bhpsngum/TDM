@@ -196,6 +196,7 @@ function setteam(ship){
 }
 function restartgame(game,isGameOver){
   yeetalien(game);
+  game.setCustomMap(map);
   game.addAlien({x:195,y:195,level:2});game.addAlien({x:-195,y:195,level:2});game.addAlien({x:-195,y:-195,level:2});game.addAlien({x:195,y:-195,level:2});
   splitIntoTeams(game);
   if (!isGameOver) gamelength = game.step+toTick(5+1/6);
@@ -662,7 +663,7 @@ game.setObject({
   type: base,
   position: {x:195,y:0,z:-2},
   rotation: {x:0,y:0,z:0},
-  scale: {x:4,y:90,z:0}
+  scale: {x:4,y:80,z:0}
 });
 
 var base2 = {
@@ -677,7 +678,7 @@ game.setObject({
   type: base2,
   position: {x:-195,y:0,z:-2},
   rotation: {x:0,y:0,z:0},
-  scale: {x:4,y:90,z:0}
+  scale: {x:4,y:80,z:0}
 });
 
 var gate = {
@@ -797,4 +798,10 @@ function addcube(x,y,w,h,z){
 for (let i=0; i<15; i++){
   addcube(-237.5,-35+i*5,.9,1,.5);
   addcube(237.5,-35+i*5,.9,1,.5);
+}
+for (let i=0; i<14; i++){
+  addcube(-264.5-i*3,-38,.7,.7,5);
+  addcube(-264.5-i*3,38,.7,.7,5);
+  addcube(264.5+i*3,38,.7,.7,.5);
+  addcube(264.5+i*3,-38,.7,.7,5);
 }
