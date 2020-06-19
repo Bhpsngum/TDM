@@ -4,6 +4,10 @@ All source codes for TDM Mod - currently private
 ## Credits
 * **Coding:** Money & Bhpsngum
 * **Author of idea:** L.Gaming & Nex
+## Files
+* `backup.js`: The mod code in the past, it's a restore point if the main file is broken. Stable.
+* `main.js`: Main release of TDM mod code. Stable.
+* `beta.js`: Early work of new version. May not stable.
 ## Changelogs
 ### 0.95.3
 * Fixed leaderboard scoring 
