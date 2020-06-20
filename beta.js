@@ -206,7 +206,6 @@ function splitIntoTeams(game){
   {
     let t=i%2, id = rand(list.length);
     configship(game.ships[list[id]], t);
-    console.log(list[id],t);
     list.splice(id, 1);
   }
 }
@@ -221,7 +220,6 @@ function setteam(ship, isUpdate){
   else t = teams.count.indexOf(Math.min(...teams.count));
   configship(ship, t);
   (isUpdate) && updatescoreboard(game);
-  console.log(t);
   return t;
 }
 function restartgame(game,isGameOver){
