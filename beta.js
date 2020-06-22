@@ -50,7 +50,6 @@ for (let i in a){
   let ship = JSON.parse(a[i]);
   (ship.level != 1) && select_ships[ship.level-2].push({name:ship.name,code:ship.typespec.code});
 }
-
 var map =
 "99999999999999999999999999999999999999999999999999\n"+
 "99999999999999999999999999999999999999999999999999\n"+
@@ -147,6 +146,7 @@ this.options = {
 function rand(lol){
   return ~~((Math.random() * lol));
 }
+var match_time = 5; // in minutes
 let teams =
 {
   proto: {
@@ -167,12 +167,12 @@ switchteam = function(id){
   updatescoreboard(game);
 }
 kick = function(i,reason="Unspecified."){
-  game.ships[i].gameover({"You were kicked for reason: ":reason,"Your name: ":game.ships[i].name,"Kicked by:":game.ships[0].name,"Score: ":game.ships[i].score});
+  yeetplayer(game.ships[i],reason);
 };
 game.modding.commands.info = function(){
-  game.modding.terminal.echo('Total amount of aliens:'+game.aliens.length)
-  game.modding.terminal.echo('Total amount of asteroids:'+game.asteroids.length)
-  game.modding.terminal.echo('Total amount of players:'+game.ships.length)
+  game.modding.terminal.echo('Total amount of aliens:'+game.aliens.length);
+  game.modding.terminal.echo('Total amount of asteroids:'+game.asteroids.length);
+  game.modding.terminal.echo('Total amount of players:'+game.ships.length);
   for (let nn=0;nn<game.ships.length;nn++){
     game.modding.terminal.echo(nn+": "+game.ships[nn].name+', type: '+game.ships[nn].type+' X: '+game.ships[nn].x+', Y:'+game.ships[nn].y+', team:'+game.ships[nn].team);
   }
@@ -186,7 +186,10 @@ game.modding.commands.tstop = function ()
   game.modding.terminal.echo("If the mod didn't stop, type `stop`");
 }
 /* End of Experimental & Debugging functions */
-
+function yeetplayer (ship,reason = "No reasons have been provided")
+{
+  ship.gameover({"You were kicked for reason:":reason,"Rounds":ship.rounds,"Wins":ship.wins});
+}
 function configship(ship, team)
 {
   ship.set(
@@ -227,7 +230,7 @@ function restartgame(game,isGameOver){
   game.setCustomMap(map);
   game.addAlien({x:195,y:195,level:2});game.addAlien({x:-195,y:195,level:2});game.addAlien({x:-195,y:-195,level:2});game.addAlien({x:195,y:-195,level:2});
   splitIntoTeams(game);
-  if (!isGameOver) gamelength = game.step+toTick(5+1/6);
+  if (!isGameOver) gamelength = game.step+toTick(match_time+1/6);
   data=randomShips();
   teams.points = [0,0];
   updatescoreboard(game);
@@ -365,7 +368,7 @@ function setupscore(ship)
 }
 function setIdle(ship)
 {
-  if (gamelength-game.step > toTick(5) || !ship.custom.shiped) ship.set({idle:true});
+  if (gamelength-game.step > toTick(match_time) || !ship.custom.shiped) ship.set({idle:true});
   else ship.set({idle:false});
 }
 this.tick = function (game){
@@ -374,7 +377,7 @@ this.tick = function (game){
     if (game.ships.length <= 1){
       delayed=1;
       started =0;
-      gamelength=game.step+toTick(5.25);
+      gamelength=game.step+toTick(match_time+0.25);
       for (let ship of game.ships){
         if (!ship.custom.wait){
           ship.custom.wait = true;
@@ -440,8 +443,8 @@ this.tick = function (game){
         }
         updatescoreboard(game);
         let steps = gamelength - game.step,msg="";
-        if (steps > toTick(5)) {
-          steps-=toTick(5);
+        if (steps > toTick(match_time)) {
+          steps-=toTick(match_time);
           msg+="Next round starts in: ";
         }
         else msg+="Time left: ";
@@ -457,9 +460,9 @@ this.tick = function (game){
             {type: "text",position:[0,0,80,33],value:msg+`${minutes}:${seconds}`,color:"#fff"},
           ]
         });
-        if (((teams.count.indexOf(0) != -1) || (game.step >= gamelength)) && (gamelength-game.step< toTick(5)))
+        if (((teams.count.indexOf(0) != -1) || (game.step >= gamelength)) && (gamelength-game.step< toTick(match_time)))
         {
-          gamelength=game.step+toTick(5.25);
+          gamelength=game.step+toTick(match_time+0.25);
           resetgame(game, teams.count.indexOf(0));
         }
         if (!started)
@@ -492,7 +495,7 @@ this.event = function (event,game){
       var component = event.id;
       if (["0","1"].indexOf(component) != -1)
       {
-        if (gamelength-game.step <= toTick(5))
+        if (gamelength-game.step <= toTick(match_time))
         {
           ship.setUIComponent({id:"0",visible:false});
           ship.setUIComponent({id:"1",visible:false});
@@ -688,7 +691,7 @@ function outputscoreboard(game,tm){
   }
 }
 
-var gamelength = toTick(5.25);
+var gamelength = toTick(match_time+0.25);
 
 function spawnSecondary(){
   var range = 10;
