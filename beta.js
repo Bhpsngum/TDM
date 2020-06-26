@@ -174,7 +174,7 @@ game.modding.commands.info = function(){
   game.modding.terminal.echo('Total amount of asteroids:'+game.asteroids.length);
   game.modding.terminal.echo('Total amount of players:'+game.ships.length);
   for (let nn=0;nn<game.ships.length;nn++){
-    game.modding.terminal.echo(nn+": "+game.ships[nn].name+', type: '+game.ships[nn].type+' X: '+game.ships[nn].x+', Y:'+game.ships[nn].y+', team:'+game.ships[nn].team);
+    game.modding.terminal.echo(nn+": "+game.ships[nn].name+', type: '+game.ships[nn].type+' X: '+game.ships[nn].x+', Y:'+game.ships[nn].y+', team:'+game.ships[nn].team+', frags:'+game.ships[nn].frag+', alive:'+game.ships[nn].alive);
   }
 };
 game.modding.commands.tstop = function ()
