@@ -120,7 +120,7 @@ var vocabulary = [
   {text: "Wait", icon:"\u0048", key:"T"},
   {text: "Base", icon:"\u0034", key:"B"},
   {text: "Follow", icon:"\u0050", key:"F"},
-],colors=[{name:"Red",color:0},{name:"Blue",color:240}];
+];
 
 this.options = {
   custom_map: map,
@@ -139,7 +139,6 @@ this.options = {
   lives: 0,
   weapons_store: false,
   soundtrack: "argon.mp3",
-  hues: colors,
   speed_mod: 1.2,
   mines_self_destroy: true,
   mines_destroy_delay: 600
@@ -148,25 +147,87 @@ this.options = {
 function rand(lol){
   return ~~((Math.random() * lol));
 }
-let teamcount = [0,0], ts = [
-    {hue:0,x:-215,y:0}, {hue:240,x:215,y:0}
-], t=[[],[]];
-function splitIntoTeams(){
-  for(let i=0, ship=game.ships[i], t=i%2; i<game.ships.length; i++) ship.set({hue:ts[t].hue,team:t,x:ts[t].x,y:ts[t].y,invulnerable:600});
+let teams =
+{
+  proto: {
+    x: 215,
+    y: 0
+  },
+  points: [0,0],
+  ships: [[],[]],
+  names: ["Red", "Blue"],
+  count: [0,0],
+  hues: [0,240],
+  x: [-1, 1]
+}
+/* Experimental & Debugging functions */
+switchteam = function(id){
+  var h,t,x,y=0; if (game.ships[0].team === 0){t=1;h=240;x=215;} else if (game.ships[0].team === 1){t=0;h=0;x=-215}
+  game.ships[id].set({team:t,hue:h,x:x,y:y,stats:88888888});
+}
+kick = function(i,reason="Unspecified."){
+  game.ships[i].gameover({"You were kicked for reason: ":reason,"Your name: ":game.ships[i].name,"Kicked by:":game.ships[0].name,"Score: ":game.ships[i].score});
+};
+game.modding.commands.info = function(){
+  game.modding.terminal.echo('Total amount of aliens:'+game.aliens.length)
+  game.modding.terminal.echo('Total amount of asteroids:'+game.asteroids.length)
+  game.modding.terminal.echo('Total amount of players:'+game.ships.length)
+  for (nn=0;nn<game.ships.length;nn++){
+    game.modding.terminal.echo(nn+": "+game.ships[nn].name+', type: '+game.ships[nn].type+' X,Y: '+game.ships[nn].x+', '+game.ships[nn].y);
+  }
+};
+game.modding.commands.tstop = function ()
+{
+  for (let ship of game.ships) ship.gameover({
+    "Rounds": ship.rounds,
+    "Wins": ship.wins
+  });
+  game.modding.terminal.echo("If the mod didn't stop, type `stop`");
+}
+/* End of Experimental & Debugging functions */
+
+function configship(ship, team)
+{
+  ship.set(
+    {
+      hue:teams.hues[team],
+      team:team,
+      x:teams.x[team]*teams.proto.x,
+      y:teams.proto.y,
+      invulnerable:600
+    }
+  );
+}
+function splitIntoTeams(game){
+  let list=[];
+  for (let i=0;i<game.ships.length;i++) list.push(i);
+  for (let i=0; list.length > 0; i++)
+  {
+    let t=i%2, id = rand(list.length);
+    configship(game.ships[list[id]], t);
+    list.splice(id, 1);
+  }
 }
 
 function setteam(ship){
-  let t = teamcount.indexOf(Math.min(...teamcount));
-  ship.set({hue:ts[t].hue,team:t,x:ts[t].x,y:ts[t].y,invulnerable:600});
+  let t;
+  if (!game.custom.auto && game.ships.length > 1)
+  {
+    t=ship.team;
+    game.custom.auto = true;
+  }
+  else t = teams.count.indexOf(Math.min(...teams.count));
+  configship(ship, t);
   return t;
 }
 function restartgame(game,isGameOver){
   yeetalien(game);
+  game.setCustomMap(map);
   game.addAlien({x:195,y:195,level:2});game.addAlien({x:-195,y:195,level:2});game.addAlien({x:-195,y:-195,level:2});game.addAlien({x:195,y:-195,level:2});
-  splitIntoTeams();
+  splitIntoTeams(game);
   if (!isGameOver) gamelength = game.step+toTick(5+1/6);
   data=randomShips();
-  points=[0,0];
+  teams.points = [0,0];
   game.setUIComponent({id: "gamestat", visible: false});
   for (let ship of game.ships){
     ship.emptyWeapons();
@@ -174,19 +235,26 @@ function restartgame(game,isGameOver){
   }
 }
 function resetgame(game,isLeave){
-  let color, text;
+  let color, text, win;
   if (isLeave != -1)
   {
-    text = `All ${colors[isLeave].name} players left. ${colors[1-isLeave].name} team wins!`;
-    color = getcolor(colors[1-isLeave].color);
+    win=1-isLeave;
+    text = `All ${teams.names[isLeave]} players left. ${teams.names[win]} team wins!`;
+    color = getcolor(teams.hues[win]);
   }
   else
   {
-    if (points[0] != points[1]){
-      let win=points.indexOf(Math.max(...points))
-      text = `Game finished! ${colors[win].name} team wins!`; color = getcolor(colors[win].color);
+    if (teams.points[0] != teams.points[1]){
+      win=teams.points.indexOf(Math.max(...teams.points));
+      text = `Game finished! ${teams.names[win]} team wins!`;
+      color = getcolor(teams.hues[win]);
     }
     else text = "Game finished! It's a draw!"; color = "#fff";
+  }
+  for (let ship of game.ships)
+  {
+    if (ship.team === win) ship.wins++;
+    ship.rounds++;
   }
   game.setUIComponent({
     id: "gamestat",
@@ -225,14 +293,14 @@ function selectship(ship){
       { type: "text",position:[0,0,100,60],value:"Choose your ship for this round",color:"#FFFFFF"},
     ]
   });
-  shipUI[0].components = [
-    { type:"box",position:[0,0,100,100],fill:"rgb(54,57,64,0.6)",stroke:"#fff",width:5},
-    { type: "text",position:[22.5,15,50,30],value:data[0].name,color:"#FFFFFF"},
-  ];
-  shipUI[1].components = [
-    { type:"box",position:[0,0,100,100],fill:"rgb(54,57,64,0.6)",stroke:"#fff",width:5},
-    { type: "text",position:[22.5,15,50,30],value:data[1].name,color:"#FFFFFF"},
-  ];
+  for (let i=0;i<2;i++)
+  {
+    let name = data[i].name,len=5*name.length;
+    shipUI[i].components = [
+      { type:"box",position:[0,0,100,100],fill:"rgb(54,57,64,0.6)",stroke:"#fff",width:5},
+      { type: "text",position:[(100-len)/2,15,len,30],value:name,color:"#FFFFFF"},
+    ];
+  }
   for (let UI of shipUI) ship.setUIComponent(UI);
   setTimeout(function(){
     ship.setUIComponent({id:"ship text",visible:false});
@@ -281,6 +349,9 @@ this.tick = function (game){
         if (!ship.custom.wait){
           ship.custom.wait = true;
           setteam(ship);
+          ship.frag=0;
+          ship.rounds = 0;
+          ship.wins = 0;
         }
         ship.set({vx:0,vy:0});
         setIdle(ship);
@@ -315,9 +386,8 @@ this.tick = function (game){
       }
       else
       {
-        t=[[],[]];
-        points = [0,0];
-        teamcount = [0,0];
+        teams.ships=[[],[]];
+        teams.count = [0,0];
         if (!game.custom.alien){
           game.custom.alien = true;
           data=randomShips();
@@ -331,13 +401,14 @@ this.tick = function (game){
             selectship(ship);
             tm=setteam(ship);
             ship.frag=0;
+            ship.rounds = 0;
+            ship.wins = 0;
           }
           ship.custom.wait = false;
           ship.set({score:ship.frag});
           setIdle(ship);
-          t[tm||ship.team].push(ship);
-          points[tm||ship.team] += ship.frag;
-          teamcount[tm||ship.team]++;
+          teams.ships[tm||ship.team].push(ship);
+          teams.count[tm||ship.team]++;
         }
         updatescoreboard(game);
         let steps = gamelength - game.step,msg="";
@@ -358,11 +429,10 @@ this.tick = function (game){
             {type: "text",position:[0,0,80,33],value:msg+`${minutes}:${seconds}`,color:"#fff"},
           ]
         });
-        if (((teamcount.indexOf(0) != -1) || (game.step > gamelength)) && (gamelength-game.step< toTick(5)))
+        if (((teams.count.indexOf(0) != -1) || (game.step >= gamelength)) && (gamelength-game.step< toTick(5)))
         {
-          console.log(gamelength, game.step);
           gamelength=game.step+toTick(5.25);
-          resetgame(game, teamcount.indexOf(0));
+          resetgame(game, teams.count.indexOf(0));
         }
       }
     }
@@ -371,10 +441,10 @@ this.tick = function (game){
       position:[0,0,50,50],
       visible:true,
       components:[
-        {type:"box",position:[2,42,10,16],fill:getcolor(colors[0].color,0.5)},
-        {type:"box",position:[88,42,10,16],fill:getcolor(colors[1].color,0.5)},
-        {type:"box",position:[88,42,1,16],fill:getcolor(colors[1].color,1)},
-        {type:"box",position:[11,42,1,16],fill:getcolor(colors[0].color,1)}
+        {type:"box",position:[2,42,10,16],fill:getcolor(teams.hues[0],0.5)},
+        {type:"box",position:[88,42,10,16],fill:getcolor(teams.hues[1],0.5)},
+        {type:"box",position:[88,42,1,16],fill:getcolor(teams.hues[1],1)},
+        {type:"box",position:[11,42,1,16],fill:getcolor(teams.hues[0],1)}
       ]
     });
   }
@@ -387,11 +457,7 @@ this.event = function (event,game){
     case "ship_spawned":
       var ship = event.ship;
       var ship_level = Math.trunc(ship.type / 100);
-      if (ship !== null){
-        if (ship.team === 0) ship.set({x:-215,y:0,crystals:((Math.round(ship_level||0)**2)*20/3),invulnerable:400,stats:88888888});
-          else
-        if (ship.team === 1) ship.set({x:215,y:0,crystals:((Math.round(ship_level||0)**2)*20/3),invulnerable:400,stats:88888888});
-      }
+      if (!Object.is(ship,null)) ship.set({x:teams.proto.x*teams.x[ship.team],y:teams.proto.y,crystals:((Math.round(ship_level||0)**2)*20/3),invulnerable:400,stats:88888888});
     break;
     case "ship_destroyed":
       showkills(game,event);
@@ -429,11 +495,6 @@ this.event = function (event,game){
   }
 };
 
-switchteam = function(id){
-  var h,t,x,y=0; if (game.ships[0].team === 0){t=1;h=240;x=215;} else if (game.ships[0].team === 1){t=0;h=0;x=-215}
-  game.ships[id].set({team:t,hue:h,x:x,y:y,stats:88888888});
-}
-
 function yeetalien(game){
   for (let alien of game.aliens){
     alien.set({kill:true});
@@ -445,7 +506,6 @@ function distance(x,y){
 }
 
 function rekt(ship,num){
-  let p=[-1,1];
   if (ship.shield<num){
     let val=ship.crystals + ship.shield;
     if (val < num) ship.set({kill:true});
@@ -460,8 +520,8 @@ function isRange(a,b,c){
 
 function checkteambase(){
   for (let ship of game.ships){
-    let teams = [1,-1],u=ship.team;
-    if (isRange(190*teams[u],240*teams[u],ship.x) && isRange(-35,35,ship.y)) rekt(ship,15*Math.trunc(ship.type/100));
+    let u=1-ship.team;
+    if (isRange(190*teams.x[u],240*teams.x[u],ship.x) && isRange(-35,35,ship.y)) rekt(ship,15*Math.trunc(ship.type/100));
   }
 }
 
@@ -489,19 +549,22 @@ function updatestats(game)
   game.setUIComponent(killstats);
 }
 function showkills (game,event){
-  let s,defclr="#FFFFFF",pln={text:event.ship.name,color:getcolor(colors[event.ship.team].color)};
+  let s,defclr="#FFFFFF",pln={text:event.ship.name,color:getcolor(teams.hues[event.ship.team])};
   if (Object.is(event.killer,null))
   s= [
     pln,
-    {text:"committed suicide",color:defclr},
+    {text:"killed themselves",color:defclr},
     {text:"",color:defclr}
   ];
   else
-  s= [
-    {text:event.killer.name,color:getcolor(colors[event.killer.team].color)},
-    {text:"🗡️",color:defclr},
-    pln
-  ];
+  {
+    s= [
+      {text:event.killer.name,color:getcolor(teams.hues[event.killer.team])},
+      {text:"killed",color:defclr},
+      pln
+    ];
+    teams.points[event.killer.team]++;
+  }
   let size=0,line=killstats.components.length/3;
   if (line >=3)
   {
@@ -551,10 +614,10 @@ sort = function(arr){
 function updatescoreboard(game){
   scoreboard.components = [];
   for (let i=0;i<2;i++) scoreboard.components.push(
-    { type:"box",position:[i*50,0,50,8],fill:getcolor(colors[i].color)},
-    { type: "text",position: [i*50,0,50,8],color: "#FFF",value: colors[i].name},
+    { type:"box",position:[i*50,0,50,8],fill:getcolor(teams.hues[i])},
+    { type: "text",position: [i*50,0,50,8],color: "#FFF",value: teams.names[i]},
   );
-  let sc=[sort(t[0]),sort(t[1])],line=1;
+  let sc=[sort(teams.ships[0]),sort(teams.ships[1])],line=1;
   sc[0].slice(10);sc[1].slice(10);
   for (let i=0;i<10;i++){
     for (let j=0;j<2;j++){
@@ -592,16 +655,16 @@ function outputscoreboard(game,tm){
       position: [40,6,26,20],
       visible: true,
       components: [
-        {type: "text",position:[-25+8,0,80,33],value:points[0],color:"#ff0000"},
+        {type: "text",position:[-25+8,0,80,33],value:teams.points[0],color:getcolor(teams.hues[0])},
         {type: "text",position:[-2,0,80,33],value:`-`,color:"#fff"},
-        {type: "text",position:[14,0,80,33],value:points[1],color:"#0000ff"},
+        {type: "text",position:[14,0,80,33],value:teams.points[1],color:getcolor(teams.hues[1])},
       ]
     });
     scoreboard.components = [...origin];
   }
 }
 
-var points=[0,0], gamelength = toTick(5.25);
+var gamelength = toTick(5.25);
 
 function spawnSecondary(){
   var range = 10;
@@ -615,7 +678,7 @@ function spawnSecondary(){
 var base = {
   id: "base",
   obj: "https://starblast.data.neuronality.com/mods/objects/plane.obj",
-  emissive: "https://raw.githubusercontent.com/45rfew/Starblast-mods-n-objs/master/blue%20line.jpg",
+  emissive: "https://raw.githubusercontent.com/45rfew/Starblast-mods-n-objs/master/blue%20line%20(1).jpg",
   transparent: false
 };
 
@@ -624,13 +687,13 @@ game.setObject({
   type: base,
   position: {x:195,y:0,z:-2},
   rotation: {x:0,y:0,z:0},
-  scale: {x:4,y:90,z:0}
+  scale: {x:4,y:80,z:0}
 });
 
 var base2 = {
   id: "base2",
   obj: "https://starblast.data.neuronality.com/mods/objects/plane.obj",
-  emissive: "https://raw.githubusercontent.com/45rfew/Starblast-mods-n-objs/master/red%20line.jpg",
+  emissive: "https://raw.githubusercontent.com/45rfew/Starblast-mods-n-objs/master/red%20line%20(1).jpg",
   transparent: false
 };
 
@@ -639,13 +702,14 @@ game.setObject({
   type: base2,
   position: {x:-195,y:0,z:-2},
   rotation: {x:0,y:0,z:0},
-  scale: {x:4,y:90,z:0}
+  scale: {x:4,y:80,z:0}
 });
+
 var gate = {
   id: "gate",
   obj: "https://raw.githubusercontent.com/45rfew/Starblast-mods-n-objs/master/H.js",
   diffuse: "https://raw.githubusercontent.com/45rfew/Starblast-mods-n-objs/master/Ship%20lambert%20orange.png",
-  emissive: "https://raw.githubusercontent.com/45rfew/Starblast-mods-n-objs/master/Ship%20emissive.png",
+  emissive: "https://raw.githubusercontent.com/45rfew/Starblast-mods-n-objs/master/Ship%20emissive%20(5).jpg",
   emissiveColor: 0xff324c,
   specularColor: 0x2f4f4f,
   transparent: false,
@@ -671,7 +735,7 @@ var gate2 = {
   id: "gate2",
   obj: "https://raw.githubusercontent.com/45rfew/Starblast-mods-n-objs/master/H2.obj",
   diffuse: "https://raw.githubusercontent.com/45rfew/Starblast-mods-n-objs/master/Ship%20lambert%20orange.png",
-  emissive: "https://raw.githubusercontent.com/45rfew/Starblast-mods-n-objs/master/Ship%20emissive.png",
+  emissive: "https://raw.githubusercontent.com/45rfew/Starblast-mods-n-objs/master/Ship%20emissive%20(5).jpg",
   emissiveColor: 0xff324c,
   specularColor: 0x2f4f4f,
   transparent: false,
@@ -681,7 +745,7 @@ var gate3 = {
   id: "gate3",
   obj: "https://raw.githubusercontent.com/45rfew/Starblast-mods-n-objs/master/H2.obj",
   diffuse: "https://raw.githubusercontent.com/45rfew/Starblast-mods-n-objs/master/Ship%20lambert%20orange.png",
-  emissive: "https://raw.githubusercontent.com/45rfew/Starblast-mods-n-objs/master/Ship%20emissive.png",
+  emissive: "https://raw.githubusercontent.com/45rfew/Starblast-mods-n-objs/master/Ship%20emissive%20(5).jpg",
   emissiveColor: 0x573df4,
   specularColor: 0x2f4f4f,
   transparent: false,
@@ -707,7 +771,7 @@ var gate4 = {
   id: "gate4",
   obj: "https://raw.githubusercontent.com/45rfew/Starblast-mods-n-objs/master/H.js",
   diffuse: "https://raw.githubusercontent.com/45rfew/Starblast-mods-n-objs/master/Ship%20lambert%20orange.png",
-  emissive: "https://raw.githubusercontent.com/45rfew/Starblast-mods-n-objs/master/Ship%20emissive.png",
+  emissive: "https://raw.githubusercontent.com/45rfew/Starblast-mods-n-objs/master/Ship%20emissive%20(5).jpg",
   emissiveColor: 0x573df4,
   specularColor: 0x2f4f4f,
   transparent: false,
@@ -744,7 +808,7 @@ var cube = {
     fixed: true
   }
 };
- 
+
 function addcube(x,y,w,h,z){
   game.setObject({
     id: "cube"+x+y,
@@ -757,5 +821,11 @@ function addcube(x,y,w,h,z){
 
 for (let i=0; i<15; i++){
   addcube(-237.5,-35+i*5,.9,1,.5);
-  addcube(237.5,-35+i*5,.9,1,.5);  
+  addcube(237.5,-35+i*5,.9,1,.5);
+}
+for (let i=0; i<13; i++){
+  addcube(-234.5+i*3.375,-38,.675,.7,.5);
+  addcube(-234.5+i*3.375,38,.675,.7,.5);
+  addcube(234.5-i*3.375,38,.675,.7,.5);
+  addcube(234.5-i*3.375,-38,.675,.7,.5);
 }

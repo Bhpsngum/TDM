@@ -228,6 +228,7 @@ function setteam(ship, isUpdate){
 function restartgame(game,isGameOver){
   yeetalien(game);
   game.setCustomMap(map);
+  game.setUIComponent({id:"logo",visible:false});
   game.addAlien({x:195,y:195,level:2});game.addAlien({x:-195,y:195,level:2});game.addAlien({x:-195,y:-195,level:2});game.addAlien({x:195,y:-195,level:2});
   splitIntoTeams(game);
   if (!isGameOver) gamelength = game.step+toTick(match_time+1/6);
@@ -278,24 +279,36 @@ function resetgame(game,isLeave){
 let shipUI = [
   {
     id: "0",
-    position: [22.5,39,22,45],
+    position: [22.5,35,25,45],
     clickable: true,
     visible: true
   },
   {
     id: "1",
-    position: [55,39,22,45],
+    position: [52,35,25,45],
     clickable: true,
     visible: true
   }
 ];
+var logo = {
+  id: "logo",
+  position:[20,15,60,30],
+  visible:true,
+  clickable:false,
+  components: [
+    {type:"text", position:[0,0,100,15], value: "TDM", color:"#FFF"},
+    {type:"text", position:[0,15,100,15], value: "Team DeathMatch", color:"#FFF"},
+  ]
+}
 function selectship(ship){
   ship.custom.shiped = false;
   ship.custom.selected = false;
+  ship.custom.choose_countdown = game.step+toTick(1/6);
   ship.set({vx:0,vy:0});
   ship.frag = 0;
+  ship.setUIComponent(logo);
   ship.setUIComponent({
-    id: "ship text", position: [39,20,22,50], visible: true,
+    id: "ship text", position: [39,15,22,50], visible: true,
     components: [
       { type: "text",position:[0,0,100,60],value:"Choose your ship for this round",color:"#FFFFFF"},
     ]
@@ -313,6 +326,7 @@ function selectship(ship){
     ship.setUIComponent({id:"ship text",visible:false});
     ship.setUIComponent({id:"0",visible:false});
     ship.setUIComponent({id:"1",visible:false});
+    ship.setUIComponent({id:"logo",visible:false});
     if (!ship.custom.selected){
       ship.set({type:data[rand(2)].code,crystals:~~((Math.trunc(data[1].code/100)**2)*20/3),invulnerable:400,stats:88888888,shield:999});
       ship.custom.shiped = true;
@@ -389,11 +403,12 @@ this.tick = function (game){
         setIdle(ship);
       }
       game.setUIComponent({
-        id: "wait", position: [39,20,22,50], visible: true,
+        id: "wait", position: [39,30,22,50], visible: true,
         components: [
           { type: "text",position:[0,0,100,10],value:"Waiting for more players...",color:"#FFFFFF"},
         ]
       });
+      game.setUIComponent(logo);
       game.setUIComponent({
         id: "scoreboard",
         visible:true,
@@ -440,6 +455,15 @@ this.tick = function (game){
           setIdle(ship);
           teams.ships[tm||ship.team].push(ship);
           teams.count[tm||ship.team]++;
+          let sec = ~~(((ship.custom.choose_countdown||0)-game.step)/60);
+          if (sec >= 0) ship.setUIComponent({
+            id: "countdown",
+            position:[45,85,10,10],
+            components:[
+              {type:"text",position:[0,0,100,100], color: "#FFF", value: sec}
+            ]
+          });
+          else ship.setUIComponent({id:"countdown",visible:false});
         }
         updatescoreboard(game);
         let steps = gamelength - game.step,msg="";
@@ -448,8 +472,8 @@ this.tick = function (game){
           msg+="Next round starts in: ";
         }
         else msg+="Time left: ";
-        let minutes = Math.floor(steps / 3600);
-        let seconds = Math.floor((steps % 3600) / 60);
+        let minutes = ~~(steps / 3600);
+        let seconds = ~~((steps % 3600) / 60);
         if (seconds < 10) seconds = "0" + seconds;
         if (minutes < 10) minutes = "0" + minutes;
         game.setUIComponent({
@@ -500,6 +524,8 @@ this.event = function (event,game){
           ship.setUIComponent({id:"0",visible:false});
           ship.setUIComponent({id:"1",visible:false});
           ship.setUIComponent({id:"ship text",visible:false});
+          ship.setUIComponent({id:"logo",visible:false});
+          ship.custom.choose_countdown = game.step;
         }
         else
         {

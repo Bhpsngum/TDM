@@ -50,7 +50,6 @@ for (let i in a){
   let ship = JSON.parse(a[i]);
   (ship.level != 1) && select_ships[ship.level-2].push({name:ship.name,code:ship.typespec.code});
 }
-
 var map =
 "99999999999999999999999999999999999999999999999999\n"+
 "99999999999999999999999999999999999999999999999999\n"+
@@ -147,6 +146,7 @@ this.options = {
 function rand(lol){
   return ~~((Math.random() * lol));
 }
+var match_time = 5; // in minutes
 let teams =
 {
   proto: {
@@ -164,16 +164,17 @@ let teams =
 switchteam = function(id){
   var h,t,x,y=0; if (game.ships[0].team === 0){t=1;h=240;x=215;} else if (game.ships[0].team === 1){t=0;h=0;x=-215}
   game.ships[id].set({team:t,hue:h,x:x,y:y,stats:88888888});
+  updatescoreboard(game);
 }
 kick = function(i,reason="Unspecified."){
-  game.ships[i].gameover({"You were kicked for reason: ":reason,"Your name: ":game.ships[i].name,"Kicked by:":game.ships[0].name,"Score: ":game.ships[i].score});
+  yeetplayer(game.ships[i],reason);
 };
 game.modding.commands.info = function(){
-  game.modding.terminal.echo('Total amount of aliens:'+game.aliens.length)
-  game.modding.terminal.echo('Total amount of asteroids:'+game.asteroids.length)
-  game.modding.terminal.echo('Total amount of players:'+game.ships.length)
-  for (nn=0;nn<game.ships.length;nn++){
-    game.modding.terminal.echo(nn+": "+game.ships[nn].name+', type: '+game.ships[nn].type+' X,Y: '+game.ships[nn].x+', '+game.ships[nn].y);
+  game.modding.terminal.echo('Total amount of aliens:'+game.aliens.length);
+  game.modding.terminal.echo('Total amount of asteroids:'+game.asteroids.length);
+  game.modding.terminal.echo('Total amount of players:'+game.ships.length);
+  for (let nn=0;nn<game.ships.length;nn++){
+    game.modding.terminal.echo(nn+": "+game.ships[nn].name+', type: '+game.ships[nn].type+' X: '+game.ships[nn].x+', Y:'+game.ships[nn].y+', team:'+game.ships[nn].team+', frags:'+game.ships[nn].frag+', alive:'+game.ships[nn].alive);
   }
 };
 game.modding.commands.tstop = function ()
@@ -185,7 +186,10 @@ game.modding.commands.tstop = function ()
   game.modding.terminal.echo("If the mod didn't stop, type `stop`");
 }
 /* End of Experimental & Debugging functions */
-
+function yeetplayer (ship,reason = "No reasons have been provided")
+{
+  ship.gameover({"You were kicked for reason:":reason,"Rounds":ship.rounds,"Wins":ship.wins});
+}
 function configship(ship, team)
 {
   ship.set(
@@ -209,7 +213,7 @@ function splitIntoTeams(game){
   }
 }
 
-function setteam(ship){
+function setteam(ship, isUpdate){
   let t;
   if (!game.custom.auto && game.ships.length > 1)
   {
@@ -218,21 +222,25 @@ function setteam(ship){
   }
   else t = teams.count.indexOf(Math.min(...teams.count));
   configship(ship, t);
+  (isUpdate) && updatescoreboard(game);
   return t;
 }
 function restartgame(game,isGameOver){
   yeetalien(game);
   game.setCustomMap(map);
+  game.setUIComponent({id:"logo",visible:false});
   game.addAlien({x:195,y:195,level:2});game.addAlien({x:-195,y:195,level:2});game.addAlien({x:-195,y:-195,level:2});game.addAlien({x:195,y:-195,level:2});
   splitIntoTeams(game);
-  if (!isGameOver) gamelength = game.step+toTick(5+1/6);
+  if (!isGameOver) gamelength = game.step+toTick(match_time+1/6);
   data=randomShips();
   teams.points = [0,0];
+  updatescoreboard(game);
   game.setUIComponent({id: "gamestat", visible: false});
   for (let ship of game.ships){
     ship.emptyWeapons();
     selectship(ship);
   }
+  started = 0;
 }
 function resetgame(game,isLeave){
   let color, text, win;
@@ -271,24 +279,36 @@ function resetgame(game,isLeave){
 let shipUI = [
   {
     id: "0",
-    position: [22.5,39,22,45],
+    position: [22.5,35,25,45],
     clickable: true,
     visible: true
   },
   {
     id: "1",
-    position: [55,39,22,45],
+    position: [52,35,25,45],
     clickable: true,
     visible: true
   }
 ];
+var logo = {
+  id: "logo",
+  position:[20,15,60,30],
+  visible:true,
+  clickable:false,
+  components: [
+    {type:"text", position:[0,0,100,15], value: "TDM", color:"#FFF"},
+    {type:"text", position:[0,15,100,15], value: "Team DeathMatch", color:"#FFF"},
+  ]
+}
 function selectship(ship){
   ship.custom.shiped = false;
   ship.custom.selected = false;
+  ship.custom.choose_countdown = game.step+toTick(1/6);
   ship.set({vx:0,vy:0});
   ship.frag = 0;
+  ship.setUIComponent(logo);
   ship.setUIComponent({
-    id: "ship text", position: [39,20,22,50], visible: true,
+    id: "ship text", position: [39,15,22,50], visible: true,
     components: [
       { type: "text",position:[0,0,100,60],value:"Choose your ship for this round",color:"#FFFFFF"},
     ]
@@ -306,6 +326,7 @@ function selectship(ship){
     ship.setUIComponent({id:"ship text",visible:false});
     ship.setUIComponent({id:"0",visible:false});
     ship.setUIComponent({id:"1",visible:false});
+    ship.setUIComponent({id:"logo",visible:false});
     if (!ship.custom.selected){
       ship.set({type:data[rand(2)].code,crystals:~~((Math.trunc(data[1].code/100)**2)*20/3),invulnerable:400,stats:88888888,shield:999});
       ship.custom.shiped = true;
@@ -334,34 +355,60 @@ function randomShips(){
   for (let i of [,,]) round_ships.push(...s[r].splice(rand(s[r].length),1));
   return round_ships;
 }
-let data=randomShips(),delayed = 0;
+let data=randomShips(),delayed = 0, started = 0;
+function checkradar(ship)
+{
+  if (!ship.custom.radar)
+  {
+    game.setUIComponent({
+      id:"radar_background",
+      position:[0,0,50,50],
+      visible:true,
+      components:[
+        {type:"box",position:[2,42,10,16],fill:getcolor(teams.hues[0],0.5)},
+        {type:"box",position:[88,42,10,16],fill:getcolor(teams.hues[1],0.5)},
+        {type:"box",position:[88,42,1,16],fill:getcolor(teams.hues[1],1)},
+        {type:"box",position:[11,42,1,16],fill:getcolor(teams.hues[0],1)}
+      ]
+    });
+    ship.custom.radar=true;
+  }
+}
+function setupscore(ship)
+{
+    ship.frag =0;
+    ship.rounds = 0;
+    ship.wins = 0;
+}
 function setIdle(ship)
 {
-  if (gamelength-game.step > toTick(5) || !ship.custom.shiped) ship.set({idle:true});
+  if (gamelength-game.step > toTick(match_time) || !ship.custom.shiped) ship.set({idle:true});
   else ship.set({idle:false});
 }
 this.tick = function (game){
-  if (game.step % 30 === 0){
+  if (game.step % 30 === 0)
+  {
     if (game.ships.length <= 1){
       delayed=1;
-      gamelength=game.step+toTick(5.25);
+      started =0;
+      gamelength=game.step+toTick(match_time+0.25);
       for (let ship of game.ships){
         if (!ship.custom.wait){
           ship.custom.wait = true;
           setteam(ship);
-          ship.frag=0;
-          ship.rounds = 0;
-          ship.wins = 0;
+          setupscore(ship);
         }
+        checkradar(ship);
         ship.set({vx:0,vy:0});
         setIdle(ship);
       }
       game.setUIComponent({
-        id: "wait", position: [39,20,22,50], visible: true,
+        id: "wait", position: [39,30,22,50], visible: true,
         components: [
           { type: "text",position:[0,0,100,10],value:"Waiting for more players...",color:"#FFFFFF"},
         ]
       });
+      game.setUIComponent(logo);
       game.setUIComponent({
         id: "scoreboard",
         visible:true,
@@ -400,25 +447,33 @@ this.tick = function (game){
             ship.custom.init = true;
             selectship(ship);
             tm=setteam(ship);
-            ship.frag=0;
-            ship.rounds = 0;
-            ship.wins = 0;
+            setupscore(ship);
           }
+          checkradar(ship);
           ship.custom.wait = false;
           ship.set({score:ship.frag});
           setIdle(ship);
           teams.ships[tm||ship.team].push(ship);
           teams.count[tm||ship.team]++;
+          let sec = ~~(((ship.custom.choose_countdown||0)-game.step)/60);
+          if (sec >= 0) ship.setUIComponent({
+            id: "countdown",
+            position:[45,85,10,10],
+            components:[
+              {type:"text",position:[0,0,100,100], color: "#FFF", value: sec}
+            ]
+          });
+          else ship.setUIComponent({id:"countdown",visible:false});
         }
         updatescoreboard(game);
         let steps = gamelength - game.step,msg="";
-        if (steps > toTick(5)) {
-          steps-=toTick(5);
+        if (steps > toTick(match_time)) {
+          steps-=toTick(match_time);
           msg+="Next round starts in: ";
         }
         else msg+="Time left: ";
-        let minutes = Math.floor(steps / 3600);
-        let seconds = Math.floor((steps % 3600) / 60);
+        let minutes = ~~(steps / 3600);
+        let seconds = ~~((steps % 3600) / 60);
         if (seconds < 10) seconds = "0" + seconds;
         if (minutes < 10) minutes = "0" + minutes;
         game.setUIComponent({
@@ -429,24 +484,18 @@ this.tick = function (game){
             {type: "text",position:[0,0,80,33],value:msg+`${minutes}:${seconds}`,color:"#fff"},
           ]
         });
-        if (((teams.count.indexOf(0) != -1) || (game.step >= gamelength)) && (gamelength-game.step< toTick(5)))
+        if (((teams.count.indexOf(0) != -1) || (game.step >= gamelength)) && (gamelength-game.step< toTick(match_time)))
         {
-          gamelength=game.step+toTick(5.25);
+          gamelength=game.step+toTick(match_time+0.25);
           resetgame(game, teams.count.indexOf(0));
+        }
+        if (!started)
+        {
+          updatescoreboard(game);
+          started =1;
         }
       }
     }
-    game.setUIComponent({
-      id:"radar_background",
-      position:[0,0,50,50],
-      visible:true,
-      components:[
-        {type:"box",position:[2,42,10,16],fill:getcolor(teams.hues[0],0.5)},
-        {type:"box",position:[88,42,10,16],fill:getcolor(teams.hues[1],0.5)},
-        {type:"box",position:[88,42,1,16],fill:getcolor(teams.hues[1],1)},
-        {type:"box",position:[11,42,1,16],fill:getcolor(teams.hues[0],1)}
-      ]
-    });
   }
   if (game.step % 60 === 0) checkteambase();
   if (game.step % 1800 === 0) spawnSecondary();
@@ -458,21 +507,25 @@ this.event = function (event,game){
       var ship = event.ship;
       var ship_level = Math.trunc(ship.type / 100);
       if (!Object.is(ship,null)) ship.set({x:teams.proto.x*teams.x[ship.team],y:teams.proto.y,crystals:((Math.round(ship_level||0)**2)*20/3),invulnerable:400,stats:88888888});
+      updatescoreboard(game);
     break;
     case "ship_destroyed":
       showkills(game,event);
       if (!Object.is(event.killer,null)) event.killer.frag++;
+      updatescoreboard(game);
     break;
     case "ui_component_clicked":
       var ship = event.ship;
       var component = event.id;
       if (["0","1"].indexOf(component) != -1)
       {
-        if (gamelength-game.step <= toTick(5))
+        if (gamelength-game.step <= toTick(match_time))
         {
           ship.setUIComponent({id:"0",visible:false});
           ship.setUIComponent({id:"1",visible:false});
           ship.setUIComponent({id:"ship text",visible:false});
+          ship.setUIComponent({id:"logo",visible:false});
+          ship.custom.choose_countdown = game.step;
         }
         else
         {
@@ -664,7 +717,7 @@ function outputscoreboard(game,tm){
   }
 }
 
-var gamelength = toTick(5.25);
+var gamelength = toTick(match_time+0.25);
 
 function spawnSecondary(){
   var range = 10;
