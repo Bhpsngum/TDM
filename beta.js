@@ -466,24 +466,22 @@ this.tick = function (game){
           else ship.setUIComponent({id:"countdown",visible:false});
         }
         updatescoreboard(game);
-        let steps = gamelength - game.step,msg="";
-        if (steps > toTick(match_time)) {
-          steps-=toTick(match_time);
-          msg+="Next round starts in: ";
+        let steps = gamelength - game.step;
+        if (steps <= toTick(match_time)) {
+          let minutes = ~~(steps / 3600);
+          let seconds = ~~((steps % 3600) / 60);
+          if (seconds < 10) seconds = "0" + seconds;
+          if (minutes < 10) minutes = "0" + minutes;
+          game.setUIComponent({
+            id: "timer",
+            position: [3,28,17,15],
+            visible: true,
+            components: [
+              {type: "text",position:[0,0,80,33],value:`Time left: ${minutes}:${seconds}`,color:"#fff"},
+            ]
+          });
         }
-        else msg+="Time left: ";
-        let minutes = ~~(steps / 3600);
-        let seconds = ~~((steps % 3600) / 60);
-        if (seconds < 10) seconds = "0" + seconds;
-        if (minutes < 10) minutes = "0" + minutes;
-        game.setUIComponent({
-          id: "timer",
-          position: [3,28,17,15],
-          visible: true,
-          components: [
-            {type: "text",position:[0,0,80,33],value:msg+`${minutes}:${seconds}`,color:"#fff"},
-          ]
-        });
+        else game.setUIComponent({id:"timer",visible:false});
         if (((teams.count.indexOf(0) != -1) || (game.step >= gamelength)) && (gamelength-game.step< toTick(match_time)))
         {
           gamelength=game.step+toTick(match_time+0.25);
