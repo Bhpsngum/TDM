@@ -1,5 +1,5 @@
 // Starblast Team Deathmatch (TDM)
-// Update 0.95.3
+// Update 0.96.69
 // Coding: Money & Bhpsngum
 // Author of idea: Nexagon & L.Gaming
 // DO NOT modify anything below if you don't know what you're doing :D
@@ -508,7 +508,6 @@ this.event = function (event,game){
       updatescoreboard(game);
     break;
     case "ship_destroyed":
-      showkills(game,event);
       if (!Object.is(event.killer,null)) event.killer.frag++;
       updatescoreboard(game);
     break;
@@ -579,60 +578,11 @@ function checkteambase(){
 function getcolor(color,alpha = 1){
   return `hsla(${color},100%,50%,${alpha})`;
 }
-
-killstats = {
-  id: "info",
-  position: [2.5,29,60,100],
-  clickable: false,
-  visible: true,
-  components: []
-};
-
 scoreboard = {
   id:"scoreboard",
   visible: true,
   components: []
 };
-function updatestats(game)
-{
-  killstats.components.splice(0,3);
-  for (let i=0;i<killstats.components.length;i++) killstats.components[i].position[1]-=5;
-  game.setUIComponent(killstats);
-}
-function showkills (game,event){
-  let s,defclr="#FFFFFF",pln={text:event.ship.name,color:getcolor(teams.hues[event.ship.team])};
-  if (Object.is(event.killer,null))
-  s= [
-    pln,
-    {text:"killed themselves",color:defclr},
-    {text:"",color:defclr}
-  ];
-  else
-  {
-    s= [
-      {text:event.killer.name,color:getcolor(teams.hues[event.killer.team])},
-      {text:"killed",color:defclr},
-      pln
-    ];
-    teams.points[event.killer.team]++;
-  }
-  let size=0,line=killstats.components.length/3;
-  if (line >=3)
-  {
-    updatestats(game);
-    line--;
-  }
-  for (let i=0;i<s.length;i++)
-  {
-    let text = " "+s[i].text+" ";
-    killstats.components.push(
-      {type:"text",position:[size+3,(line+1)*5-8,text.length,20],value:text,color:s[i].color}
-    );
-    size+=text.length;
-  }
-  game.setUIComponent(killstats);
-  setTimeout(function(){updatestats(game)},5000);
-}
 
 PlayerBox = function(posx,posy) {
   return { type:"box",position:[posx,posy-1.7,50,7],fill:"#384A5C",width:2};
