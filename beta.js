@@ -508,7 +508,11 @@ this.event = function (event,game){
       updatescoreboard(game);
     break;
     case "ship_destroyed":
-      if (!Object.is(event.killer,null)) event.killer.frag++;
+      if (!Object.is(event.killer,null))
+      {
+        event.killer.frag++;
+        teams.points[event.killer.team]++;
+      }
       updatescoreboard(game);
     break;
     case "ui_component_clicked":
