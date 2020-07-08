@@ -402,42 +402,49 @@ this.tick = function (game){
   if (game.step % 30 === 0)
   {
     if (game.ships.length <= 1){
-      delayed=1;
-      update =1;
-      gamelength=game.step+toTick(match_time+0.25);
-      for (let ship of game.ships){
-        if (!ship.custom.wait){
-          ship.custom.wait = true;
-          setteam(ship);
-          setupscore(ship);
+      if (game.step <= toTick(60))
+      {
+        delayed=1;
+        update =1;
+        gamelength=game.step+toTick(match_time+0.25);
+        for (let ship of game.ships){
+          if (!ship.custom.wait){
+            ship.custom.wait = true;
+            setteam(ship);
+            setupscore(ship);
+          }
+          checkradar(ship);
+          ship.set({vx:0,vy:0});
+          setIdle(ship);
         }
-        checkradar(ship);
-        ship.set({vx:0,vy:0});
-        setIdle(ship);
+        game.setUIComponent({
+          id: "wait", position: [39,30,22,50], visible: true,
+          components: [
+            { type: "text",position:[0,0,100,10],value:"Waiting for more players...",color:"#FFFFFF"},
+          ]
+        });
+        game.setUIComponent(logo);
+        game.setUIComponent({
+          id: "scoreboard",
+          visible:true,
+          components: [
+            { type: "text",position:[15,0,70,10],value:"Waiting for more players...",color:"#FFFFFF"},
+          ]
+        });
+        game.setUIComponent({
+          id: "timer",
+          visible:false,
+          components: []
+        });
+        game.setUIComponent({
+          id: "points",
+          visible:false,
+          components: []
+        });
       }
-      game.setUIComponent({
-        id: "wait", position: [39,30,22,50], visible: true,
-        components: [
-          { type: "text",position:[0,0,100,10],value:"Waiting for more players...",color:"#FFFFFF"},
-        ]
-      });
-      game.setUIComponent(logo);
-      game.setUIComponent({
-        id: "scoreboard",
-        visible:true,
-        components: [
-          { type: "text",position:[15,0,70,10],value:"Waiting for more players...",color:"#FFFFFF"},
-        ]
-      });
-      game.setUIComponent({
-        id: "timer",
-        visible:false,
-        components: []
-      });
-      game.setUIComponent({
-        id: "points",
-        visible:false,
-        components: []
+      else for (let ship of game.ships) ship.gameover({
+        "Rounds": ship.rounds,
+        "Wins": ship.wins
       });
     } else {
       if (delayed) {
@@ -513,7 +520,6 @@ this.tick = function (game){
 };
 
 this.event = function (event,game){
-  echo(event.name);
   switch (event.name){
     case "ship_spawned":
       var ship = event.ship;
