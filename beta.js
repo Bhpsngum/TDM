@@ -163,8 +163,9 @@ let teams =
 /* Experimental & Debugging functions */
 switchteam = function(id){
   var h,t,x,y=0; if (game.ships[0].team === 0){t=1;h=240;x=215;} else if (game.ships[0].team === 1){t=0;h=0;x=-215}
+  game.ships[id].custom.team =t;
   game.ships[id].set({team:t,hue:h,x:x,y:y,stats:88888888});
-  updatescoreboard(game);
+  update = 1;
 }
 kick = function(i,reason="Unspecified."){
   yeetplayer(game.ships[i],reason);
@@ -202,28 +203,42 @@ function configship(ship, team)
     }
   );
 }
+lOlO0.prototype.shipDisconnected = function(t) {
+    var e=this.modding.game.findShip(t.id);
+    if (e != null) {
+      this.context.event != null && this.context.event({name:"ship_disconnected",ship:e},this.modding.game);
+      return e.lI101 = !0
+    }
+}
 function splitIntoTeams(game){
   let list=[];
+  teams.count = [0,0];
+  teams.ships = [[],[]];
   for (let i=0;i<game.ships.length;i++) list.push(i);
   for (let i=0; list.length > 0; i++)
   {
     let t=i%2, id = rand(list.length);
+    game.ships[list[id]].custom.team = t;
     configship(game.ships[list[id]], t);
     list.splice(id, 1);
   }
+  update = 1;
 }
 
-function setteam(ship, isUpdate){
+function setteam(ship){
   let t;
   if (!game.custom.auto && game.ships.length > 1)
   {
     t=ship.team;
     game.custom.auto = true;
   }
-  else t = teams.count.indexOf(Math.min(...teams.count));
+  else
+  {
+    if ([...new Set(teams.count)].length == 1) t=teams.points.indexOf(Math.min(...teams.points));
+    else t = teams.count.indexOf(Math.min(...teams.count));
+  }
+  ship.custom.team = t;
   configship(ship, t);
-  (isUpdate) && updatescoreboard(game);
-  return t;
 }
 function restartgame(game,isGameOver){
   yeetalien(game);
@@ -234,13 +249,11 @@ function restartgame(game,isGameOver){
   if (!isGameOver) gamelength = game.step+toTick(match_time+1/6);
   data=randomShips();
   teams.points = [0,0];
-  updatescoreboard(game);
   game.setUIComponent({id: "gamestat", visible: false});
   for (let ship of game.ships){
     ship.emptyWeapons();
     selectship(ship);
   }
-  started = 0;
 }
 function resetgame(game,isLeave){
   let color, text, win;
@@ -261,7 +274,7 @@ function resetgame(game,isLeave){
   }
   for (let ship of game.ships)
   {
-    if (ship.team === win) ship.wins++;
+    if (ship.custom.team === win) ship.wins++;
     ship.rounds++;
   }
   game.setUIComponent({
@@ -355,7 +368,7 @@ function randomShips(){
   for (let i of [,,]) round_ships.push(...s[r].splice(rand(s[r].length),1));
   return round_ships;
 }
-let data=randomShips(),delayed = 0, started = 0;
+let data=randomShips(),delayed = 0, update = 1;
 function checkradar(ship)
 {
   if (!ship.custom.radar)
@@ -390,7 +403,7 @@ this.tick = function (game){
   {
     if (game.ships.length <= 1){
       delayed=1;
-      started =0;
+      update =1;
       gamelength=game.step+toTick(match_time+0.25);
       for (let ship of game.ships){
         if (!ship.custom.wait){
@@ -446,15 +459,16 @@ this.tick = function (game){
           if (!ship.custom.init){
             ship.custom.init = true;
             selectship(ship);
-            tm=setteam(ship);
+            setteam(ship);
             setupscore(ship);
+            update = 1;
           }
           checkradar(ship);
           ship.custom.wait = false;
           ship.set({score:ship.frag});
           setIdle(ship);
-          teams.ships[tm||ship.team].push(ship);
-          teams.count[tm||ship.team]++;
+          teams.ships[ship.custom.team].push(ship);
+          teams.count[ship.custom.team]++;
           let sec = ~~(((ship.custom.choose_countdown||0)-game.step)/60);
           if (sec >= 0) ship.setUIComponent({
             id: "countdown",
@@ -465,7 +479,6 @@ this.tick = function (game){
           });
           else ship.setUIComponent({id:"countdown",visible:false});
         }
-        updatescoreboard(game);
         let steps = gamelength - game.step;
         if (steps <= toTick(match_time)) {
           let minutes = ~~(steps / 3600);
@@ -487,11 +500,11 @@ this.tick = function (game){
           gamelength=game.step+toTick(match_time+0.25);
           resetgame(game, teams.count.indexOf(0));
         }
-        if (!started)
-        {
-          updatescoreboard(game);
-          started =1;
-        }
+      }
+      if (update)
+      {
+        updatescoreboard(game);
+        update =0;
       }
     }
   }
@@ -500,12 +513,13 @@ this.tick = function (game){
 };
 
 this.event = function (event,game){
+  echo(event.name);
   switch (event.name){
     case "ship_spawned":
       var ship = event.ship;
       var ship_level = Math.trunc(ship.type / 100);
       if (!Object.is(ship,null)) ship.set({x:teams.proto.x*teams.x[ship.team],y:teams.proto.y,crystals:((Math.round(ship_level||0)**2)*20/3),invulnerable:400,stats:88888888});
-      updatescoreboard(game);
+      update = 1;
     break;
     case "ship_destroyed":
       if (!Object.is(event.killer,null))
@@ -513,8 +527,11 @@ this.event = function (event,game){
         event.killer.frag++;
         teams.points[event.killer.team]++;
       }
-      updatescoreboard(game);
+      update = 1
     break;
+    case "ship_disconnected":
+      update = 1;
+      break;
     case "ui_component_clicked":
       var ship = event.ship;
       var component = event.id;
@@ -574,7 +591,7 @@ function isRange(a,b,c){
 
 function checkteambase(){
   for (let ship of game.ships){
-    let u=1-ship.team;
+    let u=1-ship.custom.team;
     if (isRange(190*teams.x[u],240*teams.x[u],ship.x) && isRange(-35,35,ship.y)) rekt(ship,15*Math.trunc(ship.type/100));
   }
 }
@@ -640,19 +657,19 @@ function updatescoreboard(game){
 function outputscoreboard(game,tm){
   let origin =[...scoreboard.components];
   for (let ship of game.ships){
-    let j=0,team=tm[ship.team];
+    let j=0,team=tm[ship.custom.team];
     for (j=0;j<team.length;j++){
       if (ship.id === team[j].id){
-        scoreboard.components.splice((j*2+ship.team)*2+4,0,
-          new PlayerBox(ship.team*50,(j+1)*10)
+        scoreboard.components.splice((j*2+ship.custom.team)*2+4,0,
+          new PlayerBox(ship.custom.team*50,(j+1)*10)
         );
         break;
       }
     }
-    if (j == team.length) scoreboard.components.splice((20+ship.team)*2,2,
-      new PlayerBox(ship.team*50,90),
-      new Tag("text",ship.frag,ship.team*50,90,ship.team,"right",2),
-      new Tag("player",ship.id,ship.team*50,90,ship.team,"left")
+    if (j == team.length) scoreboard.components.splice((20+ship.custom.team)*2,2,
+      new PlayerBox(ship.custom.team*50,90),
+      new Tag("text",ship.frag,ship.custom.team*50,90,ship.custom.team,"right",2),
+      new Tag("player",ship.id,ship.custom.team*50,90,ship.custom.team,"left")
     );
     ship.setUIComponent(scoreboard);
     ship.setUIComponent({
