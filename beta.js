@@ -140,6 +140,7 @@ this.options = {
   soundtrack: "argon.mp3",
   speed_mod: 1.2,
   mines_self_destroy: true,
+  max_level:1,
   mines_destroy_delay: 600
 };
 
@@ -450,7 +451,7 @@ this.tick = function (game){
       if (delayed) {
         restartgame(game);
         delayed=0;
-      }
+      }up
       else
       {
         teams.ships=[[],[]];
