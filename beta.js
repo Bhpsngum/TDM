@@ -451,7 +451,7 @@ this.tick = function (game){
       if (delayed) {
         restartgame(game);
         delayed=0;
-      }up
+      }
       else
       {
         teams.ships=[[],[]];
