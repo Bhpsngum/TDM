@@ -397,7 +397,7 @@ function selectship(ship){
     ship.setUIComponent({id:"1",visible:false});
     ship.setUIComponent({id:"logo",visible:false});
     if (!ship.custom.selected){
-      ship.set({type:data[rand(2)].code,crystals:~~((Math.trunc(data[1].code/100)**2)*20/3),invulnerable:400,stats:88888888,shield:999});
+      ship.set({type:data[rand(2)].code,invulnerable:400,stats:88888888,shield:999});
       ship.custom.shiped = true;
       ship.custom.selected = true;
     }
@@ -580,7 +580,7 @@ this.event = function (event,game){
     case "ship_spawned":
       var ship = event.ship;
       var ship_level = Math.trunc(ship.type / 100);
-      if (!Object.is(ship,null)) ship.set({x:teams.proto.x*teams.x[ship.team],y:teams.proto.y,crystals:((Math.round(ship_level||0)**2)*20/3),invulnerable:400,stats:88888888});
+      if (!Object.is(ship,null)) ship.set({x:teams.proto.x*teams.x[ship.team],y:teams.proto.y,invulnerable:400,stats:88888888});
       update = 1;
     break;
     case "ship_destroyed":
@@ -616,7 +616,6 @@ this.event = function (event,game){
         ship.custom.shiped = true;
         ship.custom.selected = true;
         ship.set({type:data[component].code,invulnerable:400,stats:88888888,shield:999});
-        ship.set({crystals:~~((Math.trunc(data[component].code/100)**2)*20/3)});
       }
     break;
     case "alien_destroyed":
