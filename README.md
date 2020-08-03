@@ -11,6 +11,13 @@ Discord Server Invitation: https://discord.gg/PMwGbfg
 * `main.js`: Main release of TDM mod code. Stable.
 * `beta.js`: Early work of new version. May not stable.
 ## Changelogs
+### 0.96.70
+- Removed Toscain.
+- Buffed H-Mercury.
+- Added new X-3 (L30N's remodel).
+- Removed cargo, players spawn with no cargo, the only way to get gems is to kill enemies.
+- added a new map (Corridors)
+- changed map name display
 ### 0.96.69
 - Applied random team sorting after each round
 - Added solid base border and the position of the bases in the radar
