@@ -192,7 +192,7 @@ function rand(lol){
   return ~~((Math.random() * lol));
 }
 var match_time = 5; // in minutes
-var pointsToWin = 36;
+var pointsToWin = 30;
 let teams =
 {
   proto: {
