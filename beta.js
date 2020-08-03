@@ -5,7 +5,7 @@
 // DO NOT modify anything below if you don't know what you're doing :D
 
 var a = {};
-a.H_Mercury_609 = '{"name":"H-Mercury","level":6,"model":9,"size":2,"next":[null,null],"specs":{"shield":{"capacity":[250,375],"reload":[6,9]},"generator":{"capacity":[100,150],"reload":[45,60]},"ship":{"mass":375,"speed":[75,95],"rotation":[50,65],"acceleration":[60,100]}},"bodies":{"main":{"section_segments":8,"offset":{"x":0,"y":0,"z":20},"position":{"x":[0,0,0,0,0,0,0,0,0],"y":[-65,-70,-60,-40,0,50,110,100],"z":[0,0,0,0,0,0,0,0]},"width":[1,5,10,20,30,25,10,0],"height":[1,5,10,15,25,20,10,0],"texture":[6,4,4,63,11,63,12],"propeller":true,"laser":{"damage":[7,10],"rate":8,"type":1,"speed":[100,150],"number":1,"error":0}},"cockpit":{"section_segments":8,"offset":{"x":0,"y":-20,"z":35},"position":{"x":[0,0,0,0,0,0,0],"y":[-20,-10,0,15,25],"z":[0,0,0,0,0]},"width":[0,10,12,10,5],"height":[0,10,13,12,5],"texture":[9,9,4,4],"propeller":false},"arms":{"section_segments":8,"offset":{"x":60,"y":0,"z":-10},"position":{"x":[0,0,0,5,10,0,0,-10],"y":[-85,-70,-80,-30,0,30,100,90],"z":[0,0,0,0,0,0,0,0]},"width":[1,5,6,15,15,15,10,0],"height":[1,5,6,20,30,25,10,0],"texture":[6,4,4,4,4,4,12],"angle":1,"propeller":true,"laser":{"damage":[2,4],"rate":4,"type":1,"speed":[150,200],"number":1,"error":0}},"canon":{"section_segments":12,"offset":{"x":100,"y":27,"z":5},"position":{"x":[0,0,0,0,0,0,0],"y":[-50,-45,-20,0,20,30,40],"z":[0,0,0,0,0,0,0]},"width":[0,5,7,7,3,5,0],"height":[0,5,15,15,3,5,0],"angle":3,"laser":{"damage":[4,8],"rate":1,"type":1,"speed":[150,200],"number":1,"error":0},"propeller":false,"texture":[6,4,10,4,4,4]}},"wings":{"main":{"offset":{"x":0,"y":-15,"z":20},"length":[60,40],"width":[60,30,20],"angle":[-20,10],"position":[30,50,30],"texture":[11,11],"bump":{"position":30,"size":10}},"font":{"length":[60],"width":[20,15],"angle":[-10,20],"position":[-20,-40],"texture":[63],"bump":{"position":30,"size":10},"offset":{"x":0,"y":0,"z":0}},"font2":{"offset":{"x":0,"y":40,"z":8},"length":[60],"width":[20,15],"angle":[-10,20],"position":[20,40],"texture":[63],"bump":{"position":30,"size":10}}},"typespec":{"name":"H-Mercury","level":6,"model":9,"code":609,"specs":{"shield":{"capacity":[250,375],"reload":[6,9]},"generator":{"capacity":[100,150],"reload":[45,60]},"ship":{"mass":375,"speed":[75,95],"rotation":[50,65],"acceleration":[60,100]}},"shape":[2.806,2.807,2.354,2.037,1.822,4.151,4.081,3.789,3.595,3.471,3.406,4.17,4.202,4.284,4.413,4.508,4.834,4.883,4.011,4.534,4.917,4.734,3.583,3.454,4.418,4.409,4.418,3.454,3.583,4.734,4.917,4.534,4.011,4.883,4.834,4.508,4.413,4.284,4.202,4.17,3.406,3.471,3.595,3.789,4.081,4.151,1.822,2.037,2.354,2.807],"lasers":[{"x":0,"y":-2.8,"z":0.8,"angle":0,"damage":[7,10],"rate":8,"type":1,"speed":[100,150],"number":1,"spread":0,"error":0,"recoil":0},{"x":2.341,"y":-3.399,"z":-0.4,"angle":1,"damage":[2,4],"rate":4,"type":1,"speed":[150,200],"number":1,"spread":0,"error":0,"recoil":0},{"x":-2.341,"y":-3.399,"z":-0.4,"angle":-1,"damage":[2,4],"rate":4,"type":1,"speed":[150,200],"number":1,"spread":0,"error":0,"recoil":0},{"x":3.895,"y":-0.917,"z":0.2,"angle":3,"damage":[4,8],"rate":1,"type":1,"speed":[150,200],"number":1,"spread":0,"error":0,"recoil":0},{"x":-3.895,"y":-0.917,"z":0.2,"angle":-3,"damage":[4,8],"rate":1,"type":1,"speed":[150,200],"number":1,"spread":0,"error":0,"recoil":0}],"radius":4.917,"next":[null,null]}}';
+a.H_Mercury_609 = '{"name":"H-Mercury","level":6,"model":9,"size":1.9,"next":[null,null],"specs":{"shield":{"capacity":[250,385],"reload":[7,10]},"generator":{"capacity":[150,200],"reload":[45,65]},"ship":{"mass":390,"speed":[75,95],"rotation":[55,70],"acceleration":[50,110]}},"bodies":{"main":{"section_segments":8,"offset":{"x":0,"y":0,"z":20},"position":{"x":[0,0,0,0,0,0,0,0,0],"y":[-65,-70,-60,-40,0,50,110,100],"z":[0,0,0,0,0,0,0,0]},"width":[1,5,10,20,30,25,10,0],"height":[1,5,10,15,25,20,10,0],"texture":[6,4,4,63,11,63,12],"propeller":true,"laser":{"damage":[7,15],"rate":5,"type":1,"speed":[120,180],"number":1,"error":0}},"cockpit":{"section_segments":8,"offset":{"x":0,"y":-20,"z":35},"position":{"x":[0,0,0,0,0,0,0],"y":[-20,-10,0,15,25],"z":[0,0,0,0,0]},"width":[0,10,12,10,5],"height":[0,10,13,12,5],"texture":[9,9,4,4],"propeller":false},"arms":{"section_segments":8,"offset":{"x":60,"y":0,"z":-10},"position":{"x":[0,0,0,5,10,0,0,-10],"y":[-85,-70,-80,-30,0,30,100,90],"z":[0,0,0,0,0,0,0,0]},"width":[1,5,6,15,15,15,10,0],"height":[1,5,6,20,30,25,10,0],"texture":[6,4,4,4,4,4,12],"angle":1,"propeller":true,"laser":{"damage":[5,6],"rate":3,"type":1,"speed":[150,200],"number":1,"error":0}},"cannon":{"section_segments":12,"offset":{"x":100,"y":27,"z":5},"position":{"x":[0,0,0,0,0,0,0],"y":[-50,-45,-20,0,20,30,40],"z":[0,0,0,0,0,0,0]},"width":[0,5,7,7,3,5,0],"height":[0,5,15,15,3,5,0],"angle":3,"laser":{"damage":[5,10],"rate":2,"type":1,"speed":[140,210],"number":1},"propeller":false,"texture":[6,4,10,4,4,4]}},"wings":{"main":{"offset":{"x":0,"y":-15,"z":20},"length":[60,40],"width":[60,30,20],"angle":[-20,10],"position":[30,50,30],"texture":[11,11],"bump":{"position":30,"size":10}},"font":{"length":[60],"width":[20,15],"angle":[-10,20],"position":[-20,-40],"texture":[63],"bump":{"position":30,"size":10},"offset":{"x":0,"y":0,"z":0}},"font2":{"offset":{"x":0,"y":40,"z":8},"length":[60],"width":[20,15],"angle":[-10,20],"position":[20,40],"texture":[63],"bump":{"position":30,"size":10}}},"typespec":{"name":"H-Mercury","level":6,"model":9,"code":609,"specs":{"shield":{"capacity":[250,385],"reload":[7,10]},"generator":{"capacity":[150,200],"reload":[45,65]},"ship":{"mass":390,"speed":[75,95],"rotation":[55,70],"acceleration":[50,110]}},"shape":[2.665,2.667,2.237,1.935,1.73,3.943,3.877,3.6,3.415,3.298,3.236,3.961,3.992,4.07,4.192,4.283,4.592,4.639,3.811,4.307,4.671,4.497,3.404,3.281,4.197,4.188,4.197,3.281,3.404,4.497,4.671,4.307,3.811,4.639,4.592,4.283,4.192,4.07,3.992,3.961,3.236,3.298,3.415,3.6,3.877,3.943,1.73,1.935,2.237,2.667],"lasers":[{"x":0,"y":-2.66,"z":0.76,"angle":0,"damage":[7,15],"rate":5,"type":1,"speed":[120,180],"number":1,"spread":0,"error":0,"recoil":0},{"x":2.224,"y":-3.23,"z":-0.38,"angle":1,"damage":[5,6],"rate":3,"type":1,"speed":[150,200],"number":1,"spread":0,"error":0,"recoil":0},{"x":-2.224,"y":-3.23,"z":-0.38,"angle":-1,"damage":[5,6],"rate":3,"type":1,"speed":[150,200],"number":1,"spread":0,"error":0,"recoil":0},{"x":3.701,"y":-0.871,"z":0.19,"angle":3,"damage":[5,10],"rate":2,"type":1,"speed":[140,210],"number":1,"spread":0,"error":0,"recoil":0},{"x":-3.701,"y":-0.871,"z":0.19,"angle":-3,"damage":[5,10],"rate":2,"type":1,"speed":[140,210],"number":1,"spread":0,"error":0,"recoil":0}],"radius":4.671,"next":[null,null]}}';
 
 var ships = [];
 for (let ship in a) ships.push(a[ship]);
@@ -23,7 +23,6 @@ for (let i=0;i<select_ships.length;i++)
     let name = select_ships[i][j];
     select_ships[i][j] = {name:name,code:(i+2)*100+j+1};
   }
-console.log(select_ships);
 var mapconfig = [
   {
     name: "Goldmine",
@@ -397,7 +396,7 @@ function selectship(ship){
     ship.setUIComponent({id:"1",visible:false});
     ship.setUIComponent({id:"logo",visible:false});
     if (!ship.custom.selected){
-      ship.set({type:data[rand(2)].code,invulnerable:400,stats:88888888,shield:999});
+      ship.set({type:data[rand(2)].code,crystals:~~((Math.trunc(data[1].code/100)**2)*20/3),invulnerable:400,stats:88888888,shield:999});
       ship.custom.shiped = true;
       ship.custom.selected = true;
     }
@@ -580,7 +579,7 @@ this.event = function (event,game){
     case "ship_spawned":
       var ship = event.ship;
       var ship_level = Math.trunc(ship.type / 100);
-      if (!Object.is(ship,null)) ship.set({x:teams.proto.x*teams.x[ship.team],y:teams.proto.y,invulnerable:400,stats:88888888});
+      if (!Object.is(ship,null)) ship.set({x:teams.proto.x*teams.x[ship.team],y:teams.proto.y,crystals:((Math.round(ship_level||0)**2)*20/3),invulnerable:400,stats:88888888});
       update = 1;
     break;
     case "ship_destroyed":
@@ -616,6 +615,7 @@ this.event = function (event,game){
         ship.custom.shiped = true;
         ship.custom.selected = true;
         ship.set({type:data[component].code,invulnerable:400,stats:88888888,shield:999});
+        ship.set({crystals:~~((Math.trunc(data[component].code/100)**2)*20/3)});
       }
     break;
     case "alien_destroyed":
