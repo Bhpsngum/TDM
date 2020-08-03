@@ -11,6 +11,11 @@ Discord Server Invitation: https://discord.gg/PMwGbfg
 * `main.js`: Main release of TDM mod code. Stable.
 * `beta.js`: Early work of new version. May not stable.
 ## Changelogs
+### 0.95.3 (minor changes)
+* Removed Toscain.
+* Buffed H-Mercury.
+* Added new win factor: in order for a team to win they have to reach 30 kills.
+* New maps! There's a new map, and there will be more very soon.
 ### 0.95.3
 * Fixed leaderboard scoring
 * Aliens spawn to each of the four asteroid boxes in the corner of the map; drops missiles/torps when killed
