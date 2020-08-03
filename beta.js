@@ -26,7 +26,7 @@ for (let i=0;i<select_ships.length;i++)
 console.log(select_ships);
 var mapconfig = [
   {
-    name: "TDM Battles",
+    name: "Goldmine",
     map:
       "99999999999999999999999999999999999999999999999999\n"+
       "99999999999999999999999999999999999999999999999999\n"+
