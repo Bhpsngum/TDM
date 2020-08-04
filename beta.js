@@ -86,7 +86,8 @@ var mapconfig = [
     ],
     secondaries: [
       {x:0,y:0}
-    ]
+    ],
+    spawn_delay: 30
   },
   {
     name: "Corridors",
@@ -148,7 +149,8 @@ var mapconfig = [
     ],
     secondaries: [
       {x:0,y:0}
-    ]
+    ],
+    spawn_delay: 30
   },
   {
     name: "Hallway",
@@ -213,7 +215,8 @@ var mapconfig = [
       {x:-20,y:20},
       {x:20,y:-20},
       {x:20,y:20}
-    ]
+    ],
+    spawn_delay: 15
   },
   {
     name: "Control",
@@ -277,7 +280,8 @@ var mapconfig = [
     ],
     secondaries: [
       {x:0,y:0}
-    ]
+    ],
+    spawn_delay: 30
   }
 ];
 
@@ -714,7 +718,7 @@ this.tick = function (game){
     }
   }
   if (game.step % 60 === 0) checkteambase();
-  if (game.step % 1800 === 0) spawnSecondary();
+  if (game.step % toTick(mapconfig[map_id].spawn_delay/60) === 0) spawnSecondary();
 };
 
 this.event = function (event,game){
