@@ -144,8 +144,8 @@ var mapconfig = [
       "99999999999999   9999999999999999   99999999999999\n"+
       "99999999999999777999999999999999977799999999999999",
     aliens: [
-      {x:0,y:185,level:2},
-      {x:0,y:-185,level:2}
+      {x:0,y:185,level:3},
+      {x:0,y:-185,level:3}
     ],
     secondaries: [
       {x:0,y:0}
@@ -512,7 +512,10 @@ var logo = {
 function setLogo(ship)
 {
   let origin = [...logo.components];
-  logo.components.push({type:"text", position:[0,30,100,10], value: "Map: "+mapconfig[map_id].name+" by "+mapconfig[map_id].author, color:"#FFF"});
+  logo.components.push(
+    {type:"text", position:[0,30,100,10], value: "Map: "+mapconfig[map_id].name, color:"#FFF"},
+    {type:"text", position:[0,40,100,10], value: "Author: "+mapconfig[map_id].author, color:"#FFF"}
+  );
   ship.setUIComponent(logo);
   logo.components = [...origin];
 }
@@ -524,7 +527,7 @@ function selectship(ship){
   ship.frag = 0;
   setLogo(ship);
   ship.setUIComponent({
-    id: "ship text", position: [39,15,22,50], visible: true,
+    id: "ship text", position: [39,17,22,50], visible: true,
     components: [
       { type: "text",position:[0,0,100,60],value:"Choose your ship for this round",color:"#FFFFFF"},
     ]
