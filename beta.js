@@ -557,7 +557,7 @@ this.tick = function (game){
           });
         }
         else game.setUIComponent({id:"timer",visible:false});
-        if (((teams.count.indexOf(0) != -1) || (game.step >= gamelength) || (Math.max(teams.points) >= pointsToWin)) && (gamelength-game.step< toTick(match_time)))
+        if (((teams.count.indexOf(0) != -1) || (game.step >= gamelength) || (Math.max(...teams.points) >= pointsToWin)) && (gamelength-game.step< toTick(match_time)))
         {
           gamelength=game.step+toTick(match_time+0.25);
           resetgame(game, teams.count.indexOf(0));
