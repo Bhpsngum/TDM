@@ -87,7 +87,8 @@ var mapconfig = [
     secondaries: [
       {x:0,y:0}
     ],
-    spawn_delay: 30
+    spawn_delay: 30,
+    restrict_tiers: false
   },
   {
     name: "Corridors",
@@ -150,7 +151,8 @@ var mapconfig = [
     secondaries: [
       {x:0,y:0}
     ],
-    spawn_delay: 30
+    spawn_delay: 30,
+    restrict_tiers: false
   },
   {
     name: "Hallway",
@@ -216,7 +218,8 @@ var mapconfig = [
       {x:20,y:-20},
       {x:20,y:20}
     ],
-    spawn_delay: 15
+    spawn_delay: 15,
+    restrict_tiers: [6]
   },
   {
     name: "Control",
@@ -281,7 +284,8 @@ var mapconfig = [
     secondaries: [
       {x:0,y:0}
     ],
-    spawn_delay: 30
+    spawn_delay: 30,
+    restrict_tiers: false
   }
 ];
 
@@ -456,7 +460,7 @@ function resetgame(game,isLeave){
   if (isLeave != -1)
   {
     win=1-isLeave;
-    text = `All ${teams.names[isLeave]} players left. ${teams.names[win]} team wins!`;
+    text = `All ${teams.names[isLeave]} plraayers left. ${teams.names[win]} team wins!`;
     color = getcolor(teams.hues[win]);
   }
   else
@@ -559,18 +563,16 @@ function toTick(minutes)
 }
 function randomShips(){
   let round_ships=[],s=JSON.parse(JSON.stringify(select_ships));
-  let rarity = [[2,7],[3,11],[4,16],[5,23],[6,30],[7,13]];
+  let rarity = [7,11,16,23,30,13];
+  let restrict = (Array.isArray(mapconfig[map_id].restrict_tiers))?mapconfig[map_id].restrict_tiers.map(x => x-2):Array(6).fill(0).map((i,j) => j);
   let field=[];
-  while (field.length<100)
-  {
-    for (let i=0;i<6;i++)
-      if (rarity[i][1] > 0)
-      {
-          field.push(rarity[i][0])
-          rarity[i][1]--;
-      }
+  for (let i of restrict)
+    for (let j=0;j<rarity[i];j++) field.push(i);
+  for (let i = field.length - 1; i > 0; i--) {
+    let j = rand(i+1);
+    [field[i], field[j]] = [field[j], field[i]];
   }
-  let r = field[rand(100)]-2;
+  let r = field[rand(field.length)];
   for (let i of [,,]) round_ships.push(...s[r].splice(rand(s[r].length),1));
   return round_ships;
 }
