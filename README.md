@@ -4,8 +4,16 @@ All source codes for TDM Mod - currently private
 Discord Server Invitation: https://discord.gg/PMwGbfg
 
 ## Credits
-* **Coding:** Money & Bhpsngum
-* **Author of idea:** L.Gaming & Nex
+
+### Main
+* **Coding:** 45rfew & Bhpsngum
+* **Author of idea:** L.Gaming & Nexagon
+### Maps in the game
+* **Kirito:** Control
+* **L.Gaming:** Goldmine, Corridors, Hallway
+* **45rfew:** Apotheosis
+* **Nexagon:** Walls
+* **Supernova:** Helix
 ## Files
 * `backup.js`: The mod code in the past, it's a restore point if the main file is broken. Stable.
 * `main.js`: Main release of TDM mod code. Stable.
