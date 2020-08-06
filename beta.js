@@ -627,7 +627,7 @@ var vocabulary = [
   {text: "Alien", icon:"\u0030", key:"I"},
   {text: "Me", icon:"\u004f", key:"E"},
   {text: "No Problem", icon:"\u0047", key:"P"},
-  {text: "Attack", icon:"\00bd", key:"A"},
+  {text: "Attack", icon:"\u00bd", key:"A"},
   {text: "Help", icon:"\u004a", key:"H"},
   {text: "Hmm?", icon:"\u004b", key:"Q"},
   {text: "", icon:"\u00a3", key:"G"},
@@ -657,7 +657,6 @@ this.options = {
   speed_mod: 1.2,
   mines_self_destroy: true,
   max_level:1,
-  hues: [60,60],
   mines_destroy_delay: 600
 };
 
@@ -767,6 +766,7 @@ function setteam(ship){
     else t = teams.count.indexOf(Math.min(...teams.count));
   }
   ship.custom.team = t;
+  ship.set({hue:60});
   configship(ship, t);
 }
 function restartgame(game,isGameOver){
