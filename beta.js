@@ -1233,7 +1233,7 @@ function outputscoreboard(game,tm){
 var gamelength = toTick(match_time+0.25);
 
 function spawnSecondary(data){
-  let options = [[10,10,10,20,91],[21,21,11,11,12]];
+  let options = [[10,10,10,20,90],[21,21,11,11,12,91]];
   let id = (isRange(0,2,data.value||0))?(data.value||0):0;
   let option = (!id)?options.flat():options[id-1];
   let spawnCode = option[rand(option.length)];
