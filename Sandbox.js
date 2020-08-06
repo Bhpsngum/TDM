@@ -94,23 +94,23 @@ var mapconfig = [
     name: "Corridors",
     author: "L.Gaming",
     map:
-      "99999999999999888999999999999999988899999999999999\n"+
+      "99999999999999777999999999999999977799999999999999\n"+
       "99999999999999   9999999999999999   99999999999999\n"+
       "99999999999999   9999999999999999   99999999999999\n"+
       "99999999999999   9999999999999999   99999999999999\n"+
       "99999999999999   9999999999999999   99999999999999\n"+
       "99999999999999   9999999999999999   99999999999999\n"+
-      "8            8        8    8        8            8\n"+
-      "8            8        8    8        8            8\n"+
-      "8            8        8    8        8            8\n"+
+      "7            7        7    7        7            7\n"+
+      "7            7        7    7        7            7\n"+
+      "7            7        7    7        7            7\n"+
       "99999999999999   9999999999999999   99999999999999\n"+
       "99999999999999   9999999999999999   99999999999999\n"+
       "99999999999999   9999999999999999   99999999999999\n"+
       "99999999999999   9999999999999999   99999999999999\n"+
+      "99999999999999   9999997999999999   99999999999999\n"+
       "99999999999999   9999999999999999   99999999999999\n"+
       "99999999999999   9999999999999999   99999999999999\n"+
-      "99999999999999   9999999999999999   99999999999999\n"+
-      "99999999999999888999999999999999988899999999999999\n"+
+      "99999999999999777999999999999999977799999999999999\n"+
       "9999999999                              9999999999\n"+
       "99999999                                  99999999\n"+
       "999999                                      999999\n"+
@@ -127,7 +127,7 @@ var mapconfig = [
       "999999                                      999999\n"+
       "99999999                                  99999999\n"+
       "9999999999                              9999999999\n"+
-      "99999999999999888999999999999999988899999999999999\n"+
+      "99999999999999777999999999999999977799999999999999\n"+
       "99999999999999   9999999999999999   99999999999999\n"+
       "99999999999999   9999999999999999   99999999999999\n"+
       "99999999999999   9999999999999999   99999999999999\n"+
@@ -135,18 +135,18 @@ var mapconfig = [
       "99999999999999   9999999999999999   99999999999999\n"+
       "99999999999999   9999999999999999   99999999999999\n"+
       "99999999999999   9999999999999999   99999999999999\n"+
-      "8            8        8    8        8            8\n"+
-      "8            8        8    8        8            8\n"+
-      "8            8        8    8        8            8\n"+
+      "7            7        7    7        7            7\n"+
+      "7            7        7    7        7            7\n"+
+      "7            7        7    7        7            7\n"+
       "99999999999999   9999999999999999   99999999999999\n"+
       "99999999999999   9999999999999999   99999999999999\n"+
       "99999999999999   9999999999999999   99999999999999\n"+
       "99999999999999   9999999999999999   99999999999999\n"+
       "99999999999999   9999999999999999   99999999999999\n"+
-      "99999999999999888999999999999999988899999999999999",
+      "99999999999999777999999999999999977799999999999999",
     aliens: [
-      {x:0,y:185,level:3,code:11},
-      {x:0,y:-185,level:3,code:11}
+      {x:0,y:185,level:3,code:17},
+      {x:0,y:-185,level:3,code:17}
     ],
     secondaries: [
       {x:0,y:0}
@@ -212,11 +212,11 @@ var mapconfig = [
       {x:0,y:0,level:2}
     ],
     secondaries: [
-      {x:0,y:0,spawn_delay:25},
-      {x:-20,y:-20,value:1},
-      {x:-20,y:20,value:1},
-      {x:20,y:-20,value:1},
-      {x:20,y:20,value:1}
+      {x:0,y:0},
+      {x:-20,y:-20},
+      {x:-20,y:20},
+      {x:20,y:-20},
+      {x:20,y:20}
     ],
     spawn_delay: 15,
     restrict_tiers: [6]
@@ -485,134 +485,6 @@ var mapconfig = [
     ],
     spawn_delay: 20,
     restrict_tiers: false
-  },
-  {
-    name: "Diamond",
-    author: "Mersite",
-    map:
-      "    999999999999999999999999999999999999999999    \n"+
-      "    999999999999999999999999999999999999999999    \n"+
-      "     9999999999999999999  9999999999999999999     \n"+
-      "      99999999999999999    99999999999999999      \n"+
-      "99     999999999999999      999999999999999     99\n"+
-      "999     9999999999999        9999999999999     999\n"+
-      "9999     99999999999          99999999999     9999\n"+
-      "99999     999999999            999999999     99999\n"+
-      "999999     9999999              9999999     999999\n"+
-      "9999999     99999                99999     9999999\n"+
-      "99999999     999                  999     99999999\n"+
-      "999999999                                999999999\n"+
-      "9999999999                              9999999999\n"+
-      "99999999999                            99999999999\n"+
-      "99999999999             99             99999999999\n"+
-      "99999999999            9999            99999999999\n"+
-      "9999999999            999999            8999999999\n"+
-      "999999999            99999999            999999999\n"+
-      "99999999           499999999994           99999999\n"+
-      "9999999           49999999999994           9999999\n"+
-      "999999           4999999999999994           999999\n"+
-      "9                     999999                     9\n"+
-      "9                       99                       9\n"+
-      "9                                                9\n"+
-      "9                                                9\n"+
-      "9                                                9\n"+
-      "9                                                9\n"+
-      "9                       99                       9\n"+
-      "9                     999999                     9\n"+
-      "999999           4999999999999994           999999\n"+
-      "9999999           49999999999994           9999999\n"+
-      "99999999           499999999994           99999999\n"+
-      "999999999            99999999            999999999\n"+
-      "9999999999            999999            9999999999\n"+
-      "99999999999            8999            99999999999\n"+
-      "99999999999             99             89999999999\n"+
-      "99999999999                            89999999999\n"+
-      "9999999999                              9999999999\n"+
-      "999999999                                999999999\n"+
-      "99999999     999                  888     99999999\n"+
-      "9999999     99999                99999     9999999\n"+
-      "999999     9999999              9999999     999999\n"+
-      "99999     999999999            999999999     99999\n"+
-      "9999     99999999999          99999999999     9999\n"+
-      "999     9999999999999        9999999999999     999\n"+
-      "99     999999999999999      999999999999999     99\n"+
-      "      99999999999999999    99999999999999999      \n"+
-      "     9999999999999999999  9999999999999999999     \n"+
-      "    999999999999999999999999999999999999999999    \n"+
-      "    999999999999999999999999999999999999999999    ",
-    aliens: [],
-    secondaries: [
-      {x:-250,y:-250}
-    ],
-    spawn_delay: 15,
-    restrict_tiers: false
-  },
-  {
-    name: "Hourglass",
-    author: "Kirito",
-    map:
-      "99999999999999999999999999999999999999999999999999\n"+
-      "99999999999999999999999999999999999999999999999999\n"+
-      "99                     9  9                     99\n"+
-      "99                     7  7                     99\n"+
-      "99                     7  7                     99\n"+
-      "99                     9  9                     99\n"+
-      "99      99999    9999999999999999    99999      99\n"+
-      "99      99999    9999999999999999    99999      99\n"+
-      "99      44444    4444444444444444    44444      99\n"+
-      "99                                              99\n"+
-      "99                                              99\n"+
-      "99                                              99\n"+
-      "99      44444                        44444      99\n"+
-      "99      999999                      999999      99\n"+
-      "999      999999                    999999      999\n"+
-      "9999      999999                  999999      9999\n"+
-      "99999      999999                999999      99999\n"+
-      "999999      99999                99999      999999\n"+
-      "999999      99999                99999      999999\n"+
-      "999999      99999                99999      999999\n"+
-      "999999      99999                99999      999999\n"+
-      "9           44444                44444           9\n"+
-      "9                                                9\n"+
-      "9                                                9\n"+
-      "9                                                9\n"+
-      "9                                                9\n"+
-      "9                                                9\n"+
-      "9                                                9\n"+
-      "9           44444                44444           9\n"+
-      "999999      99999                99999      999999\n"+
-      "999999      99999                99999      999999\n"+
-      "999999      99999                99999      999999\n"+
-      "999999      99999                99998      999999\n"+
-      "99999      999999                999999      99999\n"+
-      "9999      999999                  999999      9999\n"+
-      "999      999999                    999899      999\n"+
-      "99      999999                      999999      99\n"+
-      "99      99999                        99999      99\n"+
-      "99                  3333333333                  99\n"+
-      "99                 333333333333                 99\n"+
-      "99                33333333333333                99\n"+
-      "99      44444    4444444444444444    44444      99\n"+
-      "99      99999    9999999999999999    99999      99\n"+
-      "99      99999    9999999999999999    99999      99\n"+
-      "99                     9  9                     99\n"+
-      "99                     7  7                     99\n"+
-      "99                     7  7                     99\n"+
-      "99                     9  9                     99\n"+
-      "99999999999999999999999999999999999999999999999999\n"+
-      "99999999999999999999999999999999999999999999999999",
-    aliens: [
-      {x:0,y:-210,level:3,code:11},
-      {x:0,y:210,level:3,code:11}
-    ],
-    secondaries: [
-      {x:-145,y:-145},
-      {x:-145,y:145},
-      {x:145,y:-145},
-      {x:145,y:145}
-    ],
-    spawn_delay: 30,
-    restrict_tiers: false
   }
 ];
 
@@ -626,7 +498,7 @@ var vocabulary = [
   {text: "You", icon:"\u004e", key:"I"},
   {text: "Me", icon:"\u004f", key:"E"},
   {text: "No Problem", icon:"\u0047", key:"P"},
-  {text: "Attack", icon:"\u00bd", key:"A"},
+  {text: "Attack", icon:"\u0049", key:"A"},
   {text: "Help", icon:"\u004a", key:"H"},
   {text: "Hmmm?", icon:"\u004b", key:"Q"},
   {text: "GoodGame", icon:"\u00a3", key:"G"},
@@ -776,7 +648,7 @@ function restartgame(game,isGameOver){
   if (!isGameOver) gamelength = game.step+toTick(match_time+1/6);
   data=randomShips();
   teams.points = [0,0];
-  game.setUIComponent({id: "gamestat", visible: false});
+  for (let i=0;i<3;i++) game.setUIComponent({id: "gamestat"+i, visible: false});
   for (let ship of game.ships){
     ship.set({crystals:0});
     ship.emptyWeapons();
@@ -784,7 +656,7 @@ function restartgame(game,isGameOver){
   }
 }
 function resetgame(game,isLeave){
-  let color, text, win;
+  let color, text, win, name;
   if (isLeave != -1)
   {
     win=1-isLeave;
@@ -795,14 +667,11 @@ function resetgame(game,isLeave){
   {
     if (teams.points[0] != teams.points[1]){
       win=teams.points.indexOf(Math.max(...teams.points));
-      text = `Game finished! ${teams.names[win]} team wins!`;
+      name = teams.names[win];
+      text = `Game finished! ${name.toUpperCase()} team wins!`;
       color = getcolor(teams.hues[win]);
     }
-    else
-    {
-      text = "Game finished! It's a draw!";
-      color = "#fff";
-    }
+    else text = "Game finished! It's a draw!";
   }
   for (let ship of game.ships)
   {
@@ -810,11 +679,11 @@ function resetgame(game,isLeave){
     ship.rounds++;
   }
   game.setUIComponent({
-    id: "gamestat",
-    position: [32,18,42,40],
+    id: "gamestat0",
+    position: [32,18,35,15],
     visible: true,
     components: [
-      {type: "text",position:[0,0,80,33],value:text,color:color},
+      {type: "text",position:[0,0,100,100],value:text,color:"#fff"},
     ]
   });
   setTimeout(function(){
@@ -995,6 +864,11 @@ this.tick = function (game){
       {
         teams.ships=[[],[]];
         teams.count = [0,0];
+        if (!game.custom.alien){
+          game.custom.alien = true;
+          data=randomShips();
+          setAlien(game, map_id);
+        }
         game.setUIComponent({id:"wait",visible:false});
         for (let ship of game.ships){
           let tm;
@@ -1051,8 +925,7 @@ this.tick = function (game){
     }
   }
   if (game.step % 60 === 0) checkteambase();
-  for (let i of mapconfig[map_id].secondaries)
-    if (game.step % toTick((i.spawn_delay||mapconfig[map_id].spawn_delay||30)/60) === 0) spawnSecondary(i);
+  if (game.step % toTick(mapconfig[map_id].spawn_delay/60) === 0) spawnSecondary();
 };
 
 this.event = function (event,game){
@@ -1229,18 +1102,17 @@ function outputscoreboard(game,tm){
 
 var gamelength = toTick(match_time+0.25);
 
-function spawnSecondary(data){
-  let options = [[10,10,10,20,91],[21,21,11,11,12]];
-  let id = (isRange(0,2,data.value||0))?(data.value||0):0;
-  let option = (!id)?options.flat():options[id-1];
-  let spawnCode = option[rand(option.length)];
-  let secondary = JSON.parse(JSON.stringify(data));
-  if (typeof data.x == "function") secondary.x = data.x();
-  if (typeof data.y == "function") secondary.y = data.y();
-  delete secondary.value;
-  delete secondary.spawn_delay;
-  Object.assign(secondary,{code:spawnCode});
-  game.addCollectible(secondary);
+function spawnSecondary(){
+  let options = [10,10,10,11,11,20,21,21,91];
+  for (let data of mapconfig[map_id].secondaries)
+  {
+    let spawnCode = options[rand(options.length)];
+    let secondary = JSON.parse(JSON.stringify(data));
+    if (typeof data.x == "function") secondary.x = data.x();
+    if (typeof data.y == "function") secondary.y = data.y();
+    Object.assign(secondary,{code:spawnCode});
+    game.addCollectible(secondary);
+  }
 }
 
 var base = {
