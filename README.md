@@ -21,12 +21,12 @@ Discord Server Invitation: https://discord.gg/PMwGbfg
 * `beta.js`: Early work of new version. May not stable.
 ## Changelogs
 ### 0.96.71
-- 5 new maps!
- - Diamond (Mersite
- - Hourglass (Kirito)
- - Helix (Supernova)
- - Walls (Nexagon)
- - Apotheosis (45rfew)
+* 5 new maps!
+  - Diamond (Mersite
+  - Hourglass (Kirito)
+  - Helix (Supernova)
+  - Walls (Nexagon)
+  - Apotheosis (45rfew)
 - Slight map config changes
 ### 0.96.70
 - Removed Toscain.
