@@ -655,6 +655,7 @@ this.options = {
   speed_mod: 1.2,
   mines_self_destroy: true,
   max_level:1,
+  hues: [180,180],
   mines_destroy_delay: 600
 };
 
