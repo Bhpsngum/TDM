@@ -623,16 +623,18 @@ var vocabulary = [
   {text: "Kill", icon:"\u007f", key:"K"},
   {text: "Sorry", icon:"\u00a1", key:"S"},
   {text: "Thanks", icon:"\u0041", key:"X"},
-  {text: "You", icon:"\u004e", key:"I"},
+  {text: "You", icon:"\u004e", key:"O"},
+  {text: "Alien", icon:"\u0030", key:"I"},
   {text: "Me", icon:"\u004f", key:"E"},
   {text: "No Problem", icon:"\u0047", key:"P"},
-  {text: "Attack", icon:"\u00bd", key:"A"},
+  {text: "Attack", icon:"\00bd", key:"A"},
   {text: "Help", icon:"\u004a", key:"H"},
-  {text: "Hmmm?", icon:"\u004b", key:"Q"},
-  {text: "GoodGame", icon:"\u00a3", key:"G"},
+  {text: "Hmm?", icon:"\u004b", key:"Q"},
+  {text: "", icon:"\u00a3", key:"G"},
   {text: "Wait", icon:"\u0048", key:"T"},
-  {text: "Base", icon:"\u0034", key:"B"},
+  {text: "Spawn", icon:"\u0035", key:"B"},
   {text: "Follow", icon:"\u0050", key:"F"},
+  {text: "Group", icon:"\u0031", key:"M"}
 ];
 let map_id = rand(mapconfig.length);
 this.options = {
@@ -655,7 +657,7 @@ this.options = {
   speed_mod: 1.2,
   mines_self_destroy: true,
   max_level:1,
-  hues: [180,180],
+  hues: [60,60],
   mines_destroy_delay: 600
 };
 
