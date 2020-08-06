@@ -650,6 +650,7 @@ function restartgame(game,isGameOver){
   teams.points = [0,0];
   game.setUIComponent({id: "gamestat", visible: false});
   for (let ship of game.ships){
+    ship.set({crystals:0});
     ship.emptyWeapons();
     selectship(ship);
   }
