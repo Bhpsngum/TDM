@@ -9,11 +9,12 @@ Discord Server Invitation: https://discord.gg/PMwGbfg
 * **Coding:** 45rfew & Bhpsngum
 * **Author of idea:** L.Gaming & Nexagon
 ### Maps in the game
-* **Kirito:** Control
+* **Kirito:** Control, Hourglass
 * **L.Gaming:** Goldmine, Corridors, Hallway
 * **45rfew:** Apotheosis
 * **Nexagon:** Walls
 * **Supernova:** Helix
+* **Mersite:** Diamond
 ## Files
 * `backup.js`: The mod code in the past, it's a restore point if the main file is broken. Stable.
 * `main.js`: Main release of TDM mod code. Stable.
