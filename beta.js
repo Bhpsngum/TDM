@@ -611,7 +611,7 @@ var mapconfig = [
       {x:145,y:-145},
       {x:145,y:145}
     ],
-    spawn_delay: 30,
+    spawn_delay: 20,
     restrict_tiers: false
   }
 ];
