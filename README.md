@@ -32,13 +32,13 @@ Discord Server Invitation: https://discord.gg/PMwGbfg
 - Removed Toscain.
 - Buffed H-Mercury.
 - Added new X-3 (L30N's remodel).
-- Removed cargo, players spawn with no cargo, the only way to get gems is to kill enemies.
+- Removed cargo, players spawn with no cargo, the only way to get gems is to kill enemies and aliens.
 - added a new map (Corridors)
 - changed map name display
 ### 0.96.69
 - Applied random team sorting after each round
 - Added solid base border and the position of the bases in the radar
-- Removed New round starts in: XX:YY and add a countdown when selecting ships
+- Removed `New round starts in: XX:YY` and add a countdown when selecting ships
 - Game will now less laggy than before
 - Added tier rarity (percentage of each tier to be appeared in the selection screen).
 - Added logo (TDM - Team DeathMatch)
