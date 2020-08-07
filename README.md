@@ -39,13 +39,11 @@ Discord Server Invitation: https://discord.gg/PMwGbfg
 - Applied random team sorting after each round
 - Added solid base border and the position of the bases in the radar
 - Removed New round starts in: XX:YY and add a countdown when selecting ships
-- Game will now less laggy than before (i think, cus i optimized it)
+- Game will now less laggy than before
 - Added tier rarity (percentage of each tier to be appeared in the selection screen).
 - Added logo (TDM - Team DeathMatch)
 - Removed killstats
 - Slight displaying modification
-- Removed Toscain.
-- Buffed H-Mercury.
 - Added new win factor: in order for a team to win they have to reach 30 kills.
 - New maps! There's a new map, and there will be more very soon.
 ### 0.95.3
