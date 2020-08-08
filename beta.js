@@ -215,10 +215,7 @@ var mapconfig = [
     ],
     secondaries: [
       {x:0,y:0,spawn_delay:25},
-      {x:-20,y:-20,value:1},
-      {x:-20,y:20,value:1},
-      {x:20,y:-20,value:1},
-      {x:20,y:20,value:1}
+      {x:20,y:20,value:1,corners:[0,1,2,3]}
     ],
     spawn_delay: 15,
     restrict_tiers: [6]
@@ -342,8 +339,7 @@ var mapconfig = [
       "     9999999999999999999999999999999999999999     ",
     aliens: [],
     secondaries: [
-      {x:0,y:-140},
-      {x:0,y:140}
+      {x:0,y:140,corners:[0,3]}
     ],
     spawn_delay: 25,
     restrict_tiers: false
@@ -403,13 +399,10 @@ var mapconfig = [
       "                 999999999999999                  \n"+
       "99999999999999999999999999999999999999999999999999",
     aliens: [
-      {x:-215,y:-80,level:2,corners:[0,1,2,3]}
+      {x:215,y:80,level:2,corners:[0,1,2,3]}
     ],
     secondaries: [
-      {x:-110,y:-110},
-      {x:-110,y:110},
-      {x:110,y:-110},
-      {x:110,y:110}
+      {x:110,y:110,corners:[0,1,2,3]}
     ],
     spawn_delay: 25,
     restrict_tiers: false
@@ -601,10 +594,7 @@ var mapconfig = [
       {x:0,y:210,level:3,code:11,corners:[0,3]}
     ],
     secondaries: [
-      {x:-145,y:-145},
-      {x:-145,y:145},
-      {x:145,y:-145},
-      {x:145,y:145}
+      {x:145,y:145,corners:[0,1,2,3]}
     ],
     spawn_delay: 20,
     restrict_tiers: false
@@ -736,8 +726,7 @@ var mapconfig = [
       {x:0,y:190,corners:[0,3],duplicates:4}
     ],
     secondaries: [
-      {x:-225,y:-140},
-      {x:225,y:140}
+      {x:225,y:140,corners:[0,2]}
     ],
     spawn_delay: 20,
     restrict_tiers: false
@@ -875,20 +864,31 @@ function setCorners(data,k)
   dat.y = corners[k][1]*Math.abs(dat.y);
   return dat;
 }
-function setAlien (game,id)
+function setAlien(game,id)
 {
   let scd = [11,12,91];
   for (let i of mapconfig[id].aliens)
   {
-    let alien = i,corner = i.corners,dups = Number(i.duplicates)||1;
-    delete alien.corners;
-    delete alien.duplicates;
-    (rand(2)) && Object.assign(alien,{crystal_drop:rand(100)+1});
-    Object.assign(alien,{weapon_drop:scd[rand(scd.length)]});
+    let aliens = JSON.parse(JSON.stringify(i)),dups = Number(i.duplicates)||1;
+    delete aliens.corners;
+    delete aliens.duplicates;
     for (let j = 0;j<dups;j++)
     {
-      let cor = (Array.isArray(corner))?corner:[0];
-      for (let k of cor) game.addAlien(setCorners(alien,k));
+      let alien = JSON.parse(JSON.stringify(aliens));
+      if (Array.isArray(i.corners) && (i.corners||[]).length > 0)
+        for (let k of i.corners)
+        {
+          let a = i;
+          (rand(2)) && Object.assign(a,{crystal_drop:rand(100)+1});
+          Object.assign(a,{weapon_drop:scd[rand(scd.length)]});
+          game.addAlien(setCorners(a,k));
+        }
+      else
+      {
+        (rand(2)) && Object.assign(alien,{crystal_drop:rand(100)+1});
+        Object.assign(alien,{weapon_drop:scd[rand(scd.length)]});
+        game.addAlien(alien);
+      }
     }
   }
 }
@@ -1375,16 +1375,28 @@ function spawnSecondary(data){
   let options = [[10,10,10,20,91],[21,21,11,11,12]];
   let id = (isRange(0,2,data.value||0))?(data.value||0):0;
   let option = (!id)?options.flat():options[id-1];
-  let spawnCode = option[rand(option.length)];
-  let corner = (Array.isArray(data.corners))?data.corners:[0];
   let secondary = JSON.parse(JSON.stringify(data));
-  if (typeof data.x == "function") secondary.x = data.x();
-  if (typeof data.y == "function") secondary.y = data.y();
   delete secondary.value;
   delete secondary.spawn_delay;
   delete secondary.corners;
-  Object.assign(secondary,{code:spawnCode});
-  for (let i of corner) game.addCollectible(setCorners(secondary,i));
+  if (Array.isArray(data.corners) && (data.corners||[]).length>0)
+    for (let i of data.corners)
+    {
+      let scdr = JSON.parse(JSON.stringify(secondary));
+      let spawnCode = option[rand(option.length)];
+      if (typeof data.x == "function") scdr.x = data.x();
+      if (typeof data.y == "function") scdr.y = data.y();
+      Object.assign(scdr,{code:spawnCode});
+      game.addCollectible(setCorners(scdr,i));
+    }
+  else
+  {
+    let spawnCode = option[rand(option.length)];
+    if (typeof data.x == "function") secondary.x = data.x();
+    if (typeof data.y == "function") secondary.y = data.y();
+    Object.assign(secondary,{code:spawnCode});
+    game.addCollectible(secondary);
+  }
 }
 
 var base = {
