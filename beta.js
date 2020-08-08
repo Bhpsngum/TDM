@@ -743,7 +743,7 @@ var mapconfig = [
     restrict_tiers: false
   }
 ];
-console.log(mapconfig);
+let corners = [[1,1],[-1,1],[-1,-1],[1,-1]];
 var vocabulary = [
   {text: "Yes", icon:"\u004c", key:"Y"},
   {text: "No", icon:"\u004d", key:"N"},
@@ -868,9 +868,16 @@ function splitIntoTeams(game){
   }
   update = 1;
 }
+function setCorners(data,k)
+{
+  let dat = data;
+  dat.x = corners[k][0]*Math.abs(dat.x);
+  dat.y = corners[k][1]*Math.abs(dat.y);
+  return dat;
+}
 function setAlien (game,id)
 {
-  let scd = [11,12,91], corners = [[1,1],[-1,1],[-1,-1],[1,-1]];
+  let scd = [11,12,91];
   for (let i of mapconfig[id].aliens)
   {
     let alien = i,corner = i.corners,dups = Number(i.duplicates)||1;
@@ -881,12 +888,7 @@ function setAlien (game,id)
     for (let j = 0;j<dups;j++)
     {
       let cor = (Array.isArray(corner))?corner:[0];
-      for (let k of cor)
-      {
-        alien.x = corners[k][0]*Math.abs(alien.x);
-        alien.y = corners[k][1]*Math.abs(alien.y);
-        game.addAlien(alien);
-      }
+      for (let k of cor) game.addAlien(setCorners(alien,k));
     }
   }
 }
@@ -1374,13 +1376,15 @@ function spawnSecondary(data){
   let id = (isRange(0,2,data.value||0))?(data.value||0):0;
   let option = (!id)?options.flat():options[id-1];
   let spawnCode = option[rand(option.length)];
+  let corner = (Array.isArray(data.corners))?data.corners:[0];
   let secondary = JSON.parse(JSON.stringify(data));
   if (typeof data.x == "function") secondary.x = data.x();
   if (typeof data.y == "function") secondary.y = data.y();
   delete secondary.value;
   delete secondary.spawn_delay;
+  delete secondary.corners;
   Object.assign(secondary,{code:spawnCode});
-  game.addCollectible(secondary);
+  for (let i of corner) game.addCollectible(setCorners(secondary,i));
 }
 
 var base = {
