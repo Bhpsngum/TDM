@@ -15,7 +15,7 @@ Discord Server Invitation: https://discord.gg/PMwGbfg
 * **Nexagon:** Walls
 * **Supernova:** Helix
 * **Mersite:** Diamond
-* **SChickenMan:** Alien Hell, No Man's Land
+* **SChickenMan:** No Man's Land, Trenches
 ## Files
 * `backup.js`: The mod code in the past, it's a restore point if the main file is broken. Stable.
 * `main.js`: Main release of TDM mod code. Stable.
