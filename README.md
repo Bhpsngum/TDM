@@ -12,7 +12,7 @@ Discord Server Invitation: https://discord.gg/PMwGbfg
 * **Kirito:** Control, Hourglass
 * **L.Gaming:** Goldmine, Corridors, Hallway
 * **45rfew:** Apotheosis
-* **Nexagon:** Walls
+* **Nexagon:** Walls, Field
 * **Supernova:** Helix
 * **Mersite:** Diamond
 * **SChickenMan:** No Man's Land, Trenches
