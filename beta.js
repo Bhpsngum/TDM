@@ -473,7 +473,7 @@ var mapconfig = [
       }
     ],
     spawn_delay: 20,
-    restrict_tiers: false
+    restrict_tiers: [2,3,4,5,6]
   },
   {
     name: "Diamond",
