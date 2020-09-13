@@ -21,6 +21,10 @@ Discord Server Invitation: https://discord.gg/PMwGbfg
 * `main.js`: Main release of TDM mod code. Stable.
 * `beta.js`: Early work of new version. May not stable.
 ## Changelogs
+### 0.96.96
+Last update
+Because of some unexpected problems, this mod will reach it end and the code will be public to everyone.
+Thanks everyone who've enjoyed it!
 ### 0.96.71
 * 5 new maps!
   - Diamond (Mersite
