@@ -1,5 +1,5 @@
 # Team Deatmatch Mod (TDM)
-All source codes for TDM Mod - currently private
+All source codes for TDM
 
 Discord Server Invitation: https://discord.gg/PMwGbfg
 
