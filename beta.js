@@ -946,6 +946,45 @@ game.modding.commands.tstop = function ()
   game.modding.terminal.echo("If the mod didn't stop, type `stop`");
 }
 /* End of Experimental & Debugging functions */
+var parseUI = function (UI) {
+  try { UI = new Object(JSON.parse(JSON.stringify(UI))) } catch (e) { UI = {} }
+
+  let id;
+  try { id = String(UI.id) } catch (e) { id = '' }
+
+  let parsedUI = {
+    id: id,
+    position: UI.position,
+    visible: UI.visible,
+    clickable: UI.clickable,
+    shortcut: UI.shortcut,
+    components: UI.components
+  }
+
+  if (parsedUI.visible || parsedUI.visible == null) {
+    delete parsedUI.visible;
+    let position = parsedUI.position, count = 0;
+    for (let i = 0 ; i < 4 ; i++) {
+      let pos = (position||{})[i];
+      if (pos == null || pos == 100) count++
+    }
+    if (count == 4) delete parsedUI.position
+  }
+  else {
+    parsedUI.position = [0,0,0,0];
+    parsedUI.visible = false;
+    delete parsedUI.components
+  }
+
+  if (!parsedUI.clickable) {
+    delete parsedUI.clickable;
+    delete parsedUI.shortcut
+  }
+
+  return parsedUI
+}, sendUI = function(ship, UI) {
+  return ship != null && ship.setUIComponent(parseUI(UI))
+}
 function yeetplayer (ship,reason = "No reasons have been provided")
 {
   ship.gameover({"You were kicked for reason:":reason,"Rounds":ship.rounds,"Wins":ship.wins});
@@ -962,13 +1001,7 @@ function configship(ship, team)
     }
   );
 }
-lOlO0.prototype.shipDisconnected = function(t) {
-    var e=this.modding.game.findShip(t.id);
-    if (e != null) {
-      this.context.event != null && this.context.event({name:"ship_disconnected",ship:e},this.modding.game);
-      return e.lI101 = !0
-    }
-}
+
 function splitIntoTeams(game){
   let list=[];
   teams.count = [0,0];
@@ -1039,12 +1072,12 @@ function restartgame(game,isGameOver){
   map_id = rand(mapconfig.length);
   game.setCustomMap(mapconfig[map_id].map);
   setAlien(game,map_id);
-  game.setUIComponent({id:"logo",visible:false});
+  sendUI(game, {id:"logo",visible:false});
   splitIntoTeams(game);
   if (!isGameOver) gamelength = game.step+toTick(match_time+1/6);
   data=randomShips();
   teams.points = [0,0];
-  game.setUIComponent({id: "gamestat", visible: false});
+  sendUI(game, {id: "gamestat", visible: false});
   for (let ship of game.ships){
     ship.set({crystals:0});
     ship.emptyWeapons();
@@ -1077,7 +1110,7 @@ function resetgame(game,isLeave){
     if (ship.custom.team === win) ship.wins++;
     ship.rounds++;
   }
-  game.setUIComponent({
+  sendUI(game, {
     id: "gamestat",
     position: [32,18,42,40],
     visible: true,
@@ -1120,7 +1153,7 @@ function setLogo(ship)
     {type:"text", position:[0,30,100,10], value: "Map: "+mapconfig[map_id].name, color:"#FFF"},
     {type:"text", position:[0,40,100,10], value: "Author: "+mapconfig[map_id].author, color:"#FFF"}
   );
-  ship.setUIComponent(logo);
+  sendUI(ship, logo);
   logo.components = [...origin];
 }
 function selectship(ship){
@@ -1130,7 +1163,7 @@ function selectship(ship){
   ship.set({vx:0,vy:0});
   ship.frag = 0;
   setLogo(ship);
-  ship.setUIComponent({
+  sendUI(ship, {
     id: "ship text", position: [39,17,22,50], visible: true,
     components: [
       { type: "text",position:[0,0,100,60],value:"Choose your ship for this round",color:"#FFFFFF"},
@@ -1144,12 +1177,12 @@ function selectship(ship){
       { type: "text",position:[(100-len)/2,15,len,30],value:name,color:"#FFFFFF"},
     ];
   }
-  for (let UI of shipUI) ship.setUIComponent(UI);
+  for (let UI of shipUI) sendUI(ship, UI);
   setTimeout(function(){
-    ship.setUIComponent({id:"ship text",visible:false});
-    ship.setUIComponent({id:"0",visible:false});
-    ship.setUIComponent({id:"1",visible:false});
-    ship.setUIComponent({id:"logo",visible:false});
+    sendUI(ship, {id:"ship text",visible:false});
+    sendUI(ship, {id:"0",visible:false});
+    sendUI(ship, {id:"1",visible:false});
+    sendUI(ship, {id:"logo",visible:false});
     if (!ship.custom.selected){
       ship.set({type:data[rand(2)].code,invulnerable:400,stats:88888888,shield:999});
       ship.custom.shiped = true;
@@ -1181,7 +1214,7 @@ function checkradar(ship)
 {
   if (!ship.custom.radar)
   {
-    game.setUIComponent({
+    sendUI(game, {
       id:"radar_background",
       position:[0,0,50,50],
       visible:true,
@@ -1225,26 +1258,26 @@ this.tick = function (game){
           ship.set({vx:0,vy:0});
           setIdle(ship);
         }
-        game.setUIComponent({
+        sendUI(game, {
           id: "wait", position: [39,30,22,50], visible: true,
           components: [
             { type: "text",position:[0,0,100,10],value:"Waiting for more players...",color:"#FFFFFF"},
           ]
         });
         setLogo(game);
-        game.setUIComponent({
+        sendUI(game, {
           id: "scoreboard",
           visible:true,
           components: [
             { type: "text",position:[15,0,70,10],value:"Waiting for more players...",color:"#FFFFFF"},
           ]
         });
-        game.setUIComponent({
+        sendUI(game, {
           id: "timer",
           visible:false,
           components: []
         });
-        game.setUIComponent({
+        sendUI(game, {
           id: "points",
           visible:false,
           components: []
@@ -1263,7 +1296,7 @@ this.tick = function (game){
       {
         teams.ships=[[],[]];
         teams.count = [0,0];
-        game.setUIComponent({id:"wait",visible:false});
+        sendUI(game, {id:"wait",visible:false});
         for (let ship of game.ships){
           let tm;
           if (!ship.custom.init){
@@ -1280,14 +1313,14 @@ this.tick = function (game){
           teams.ships[ship.custom.team].push(ship);
           teams.count[ship.custom.team]++;
           let sec = ~~(((ship.custom.choose_countdown||0)-game.step)/60);
-          if (sec >= 0) ship.setUIComponent({
+          if (sec >= 0) sendUI(ship, {
             id: "countdown",
             position:[45,85,10,10],
             components:[
               {type:"text",position:[0,0,100,100], color: "#FFF", value: sec}
             ]
           });
-          else ship.setUIComponent({id:"countdown",visible:false});
+          else sendUI(ship, {id:"countdown",visible:false});
         }
         let steps = gamelength - game.step;
         if (steps <= toTick(match_time)) {
@@ -1295,7 +1328,7 @@ this.tick = function (game){
           let seconds = ~~((steps % 3600) / 60);
           if (seconds < 10) seconds = "0" + seconds;
           if (minutes < 10) minutes = "0" + minutes;
-          game.setUIComponent({
+          sendUI(game, {
             id: "timer",
             position: [3,28,17,15],
             visible: true,
@@ -1304,7 +1337,7 @@ this.tick = function (game){
             ]
           });
         }
-        else game.setUIComponent({id:"timer",visible:false});
+        else sendUI(game, {id:"timer",visible:false});
         if (((teams.count.indexOf(0) != -1) || (game.step >= gamelength) || (Math.max(...teams.points) >= pointsToWin)) && (gamelength-game.step< toTick(match_time)))
         {
           gamelength=game.step+toTick(match_time+0.25);
@@ -1349,17 +1382,17 @@ this.event = function (event,game){
       {
         if (gamelength-game.step <= toTick(match_time))
         {
-          ship.setUIComponent({id:"0",visible:false});
-          ship.setUIComponent({id:"1",visible:false});
-          ship.setUIComponent({id:"ship text",visible:false});
-          ship.setUIComponent({id:"logo",visible:false});
+          sendUI(ship, {id:"0",visible:false});
+          sendUI(ship, {id:"1",visible:false});
+          sendUI(ship, {id:"ship text",visible:false});
+          sendUI(ship, {id:"logo",visible:false});
           ship.custom.choose_countdown = game.step;
         }
         else
         {
           for (let i=0;i<2;i++) shipUI[i].components = [...shipUI[i].components.slice(0,2)]
           shipUI[component].components.push({type: "text",position:[22.5,50,50,30],value:"✓",color:"#FFFFFF"});
-          for (let UI of shipUI) ship.setUIComponent(UI);
+          for (let UI of shipUI) sendUI(ship, UI);
         }
         ship.custom.shiped = true;
         ship.custom.selected = true;
@@ -1480,8 +1513,8 @@ function outputscoreboard(game,tm){
       new Tag("text",ship.frag,ship.custom.team*50,90,ship.custom.team,"right",2),
       new Tag("player",ship.id,ship.custom.team*50,90,ship.custom.team,"left")
     );
-    ship.setUIComponent(scoreboard);
-    ship.setUIComponent({
+    sendUI(ship, scoreboard);
+    sendUI(ship, {
       id: "points",
       position: [40,6,26,20],
       visible: true,
@@ -1679,3 +1712,50 @@ for (let i=0; i<13; i++){
   addcube(234.5-i*3.375,38,.675,.7,.5);
   addcube(234.5-i*3.375,-38,.675,.7,.5);
 }
+
+/* "ship_disconnected" event - fired when a ship is leaving (Encapsuled version)
+Made by (123) Notus
+
+RESTRICTIONS - Do not use the values/variables/components listing below in their particular contexts:
+
+Game properties:
+  game.custom.shipDisconnected_init
+*/
+
+/* Encapsuled part - Don't modify anything! This MUST BE appended at the end of your mod code! */
+;(function(){
+  var internals_init = function() {
+    if (game.custom.shipDisconnected_init) {
+      return;
+    }
+    const modding = game.modding;
+    const internals = Object.values(modding).find(val => val && typeof val.shipDisconnected === "function");
+    if (!internals) {
+      modding.terminal.error(new Error("Failed to initialize 'ship_disconnected' event: modding internals object not found"));
+      return;
+    }
+    if (!internals.shipDisconnected.old) {
+      function shipDisconnected({id} = {}) {
+        if (modding.context.event && id) {
+          var ship = game.findShip(id);
+        }
+        var result = shipDisconnected.old.apply(this, arguments);
+        if (ship) {
+          try {
+            modding.context.event({ name: "ship_disconnected", ship }, game);
+          } catch (e) {}
+        }
+        return result;
+      }
+      shipDisconnected.old = internals.shipDisconnected;
+      internals.shipDisconnected = shipDisconnected;
+    }
+    game.custom.shipDisconnected_init = true;
+  }
+  var tick = this.tick;
+  this.tick = function() {
+    this.tick = tick;
+    try { internals_init() } catch(e){}
+    return typeof this.tick == "function" && this.tick.apply(this, arguments);
+  }
+}).call(this);
